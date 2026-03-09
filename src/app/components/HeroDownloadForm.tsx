@@ -162,7 +162,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
           ))}
         </div>
 
-        <div className="hero-promo-banner mt-6">
+        {/* <div className="hero-promo-banner mt-6">
           <div className="hero-promo-mark" aria-hidden="true">
             <IconGlyph name="download" className="h-8 w-8" />
           </div>
@@ -173,7 +173,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
             </p>
           </div>
           <div className="hero-promo-chip">Preview Ready</div>
-        </div>
+        </div> */}
 
         <div className="mt-4 flex flex-col gap-3 px-1 text-sm text-[#7d759d] sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-2">

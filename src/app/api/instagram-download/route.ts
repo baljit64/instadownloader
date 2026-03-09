@@ -51,6 +51,10 @@ function hasPostPrivateMarker(html: string): boolean {
   );
 }
 
+function isExplicitPrivateResponse(status: number, body: string): boolean {
+  return (status === 401 || status === 403) && hasPostPrivateMarker(body);
+}
+
 function asRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === 'object' && !Array.isArray(value)
     ? (value as Record<string, unknown>)
@@ -548,7 +552,10 @@ function extractFromJsonEndpoint(targetUrl: string): Promise<InstagramParseResul
       const html = String(response.data ?? '');
 
       if (status === 403 || status === 401) {
-        return { media: [], statusHint: 'private' };
+        if (isExplicitPrivateResponse(status, html)) {
+          return { media: [], statusHint: 'private' };
+        }
+        continue;
       }
 
       if (status === 404) {
@@ -673,7 +680,11 @@ function extractFromEmbedPage(targetUrl: string): Promise<InstagramParseResult> 
     }
 
     if (response.status === 403 || response.status === 401) {
-      return { media: [], statusHint: 'private' };
+      const html = String(response.data ?? '');
+      if (isExplicitPrivateResponse(response.status, html)) {
+        return { media: [], statusHint: 'private' };
+      }
+      return { media: [], statusHint: 'ok' };
     }
 
     if (response.status >= 400 || !response.data) {
@@ -766,7 +777,16 @@ async function extractFromGraphQL(shortcode: string): Promise<InstagramParseResu
       );
 
       if (response.status === 401 || response.status === 403) {
-        return { media: [], statusHint: 'private' };
+        const body =
+          typeof response.data === 'string'
+            ? response.data
+            : JSON.stringify(response.data ?? {});
+
+        if (isExplicitPrivateResponse(response.status, body)) {
+          return { media: [], statusHint: 'private' };
+        }
+
+        continue;
       }
 
       if (response.status >= 400) {
@@ -937,11 +957,7 @@ export async function POST(request: NextRequest) {
     const html = String(htmlResponse.data ?? '');
     const initialLoadReturned404 = htmlResponse.status === 404;
 
-    if (htmlResponse.status === 401 || htmlResponse.status === 403) {
-      return errorResponse('Private Instagram post.', 403);
-    }
-
-    if (hasPostPrivateMarker(html)) {
+    if (isExplicitPrivateResponse(htmlResponse.status, html) || hasPostPrivateMarker(html)) {
       return errorResponse('Private Instagram post.', 403);
     }
 

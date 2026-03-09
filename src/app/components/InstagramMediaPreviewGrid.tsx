@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Card, Tag } from 'antd';
 import type { InstagramMediaItem } from '../lib/instagram';
 
@@ -10,12 +10,39 @@ interface InstagramMediaPreviewGridProps {
 
 export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPreviewGridProps) {
   const [downloading, setDownloading] = useState<Record<number, boolean>>({});
+  const [imagePreviewMode, setImagePreviewMode] = useState<Record<number, 'proxy' | 'direct' | 'unavailable'>>({});
+
+  useEffect(() => {
+    setImagePreviewMode({});
+  }, [media]);
+
+  const getProxyUrl = (url: string) =>
+    `/api/instagram-download-proxy?url=${encodeURIComponent(url)}`;
+
+  const getImagePreviewUrl = (item: InstagramMediaItem, index: number) =>
+    imagePreviewMode[index] === 'direct' ? item.url : getProxyUrl(item.url);
+
+  const handleImagePreviewError = (index: number) => {
+    setImagePreviewMode((prev) => {
+      const current = prev[index] ?? 'proxy';
+
+      if (current === 'proxy') {
+        return { ...prev, [index]: 'direct' };
+      }
+
+      if (current === 'direct') {
+        return { ...prev, [index]: 'unavailable' };
+      }
+
+      return prev;
+    });
+  };
 
   const handleDownload = async (item: InstagramMediaItem, index: number) => {
     setDownloading((prev) => ({ ...prev, [index]: true }));
 
     try {
-      const proxyUrl = `/api/instagram-download-proxy?url=${encodeURIComponent(item.url)}`;
+      const proxyUrl = getProxyUrl(item.url);
       const response = await fetch(proxyUrl);
 
       if (!response.ok) {
@@ -33,7 +60,7 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
       anchor.remove();
       URL.revokeObjectURL(blobUrl);
     } catch {
-      const fallbackUrl = `/api/instagram-download-proxy?url=${encodeURIComponent(item.url)}`;
+      const fallbackUrl = getProxyUrl(item.url);
       window.location.href = fallbackUrl;
     } finally {
       setDownloading((prev) => ({ ...prev, [index]: false }));
@@ -58,9 +85,19 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
           <div className="mb-4 overflow-hidden rounded-[20px] bg-[#f5f1ff]">
             {item.type === 'video' ? (
               <video controls src={item.url} className="h-56 w-full object-cover" />
+            ) : imagePreviewMode[index] === 'unavailable' ? (
+              <div className="flex h-56 w-full items-center justify-center bg-[linear-gradient(135deg,#f7f2ff,#ece8ff)] px-6 text-center text-sm font-medium text-[#6f6893]">
+                Image preview unavailable. Use download to fetch the original file.
+              </div>
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={item.url} alt={`Instagram media ${index + 1}`} className="h-56 w-full object-cover" />
+              <img
+                src={getImagePreviewUrl(item, index)}
+                alt={`Instagram media ${index + 1}`}
+                className="h-56 w-full object-cover"
+                loading="lazy"
+                onError={() => handleImagePreviewError(index)}
+              />
             )}
           </div>
 
