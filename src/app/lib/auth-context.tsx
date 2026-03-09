@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/app/lib/supabaseClient';
 
 interface AuthContextValue {
   user: User | null;
@@ -33,8 +33,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
     }
 
+    const authClient = supabase;
+
     async function bootstrapSession() {
-      const { data, error } = await supabase.auth.getSession();
+      const { data, error } = await authClient.auth.getSession();
 
       if (!mounted) {
         return;
@@ -51,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = authClient.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });

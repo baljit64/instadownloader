@@ -5,9 +5,9 @@ import { FormEvent, useState } from 'react';
 import UploadDropzone from './UploadDropzone';
 import ProgressBar from './ProgressBar';
 import ErrorAlert from './ErrorAlert';
-import { uploadFile, getJobStatus } from '@/lib/api';
-import { useAuth } from '@/lib/auth-context';
-import type { JobResponse, JobStatusResponse, OperationField } from '@/lib/types';
+import { uploadFile, getJobStatus } from '@/app/lib/api';
+import { useAuth } from '@/app/lib/auth-context';
+import type { JobResponse, JobStatusResponse, OperationField } from '@/app/lib/types';
 
 type StartFunction = (
   fileIds: string[],

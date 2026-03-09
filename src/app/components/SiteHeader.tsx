@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/app/lib/auth-context';
 
 const navLinks = [
   { label: 'Merge PDF', href: '/tools/merge' },

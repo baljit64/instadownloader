@@ -58,13 +58,20 @@ export async function GET(request: NextRequest) {
           : 'jpg';
 
     const filename = `instagram-media.${ext}`;
+    const body =
+      upstream.data instanceof ArrayBuffer
+        ? upstream.data
+        : upstream.data.buffer.slice(
+            upstream.data.byteOffset,
+            upstream.data.byteOffset + upstream.data.byteLength
+          );
 
-    return new NextResponse(upstream.data as Buffer, {
+    return new NextResponse(body, {
       status: 200,
       headers: {
         'Content-Type': contentType,
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Content-Length': String((upstream.data as Buffer).byteLength),
+        'Content-Length': String(body.byteLength),
         'Cache-Control': 'private, max-age=3600',
       },
     });
