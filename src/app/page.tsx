@@ -160,7 +160,7 @@ export default function Home() {
 
           <div className="float-chip left-6 top-24">link</div>
           <div className="float-chip float-chip-delayed right-10 top-16">story</div>
-          <div className="float-chip left-10 bottom-18">video</div>
+          <div className="float-chip bottom-[4.5rem] left-10">video</div>
           <div className="float-chip float-chip-delayed right-6 bottom-20">secure</div>
 
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
@@ -191,7 +191,7 @@ export default function Home() {
                 </label>
 
                 <button
-                  className="min-h-16 rounded-[22px] bg-[linear-gradient(135deg,#7b6cff,#9384ff)] px-8 text-base font-semibold text-white shadow-[0_20px_38px_rgba(112,92,255,0.28)] transition hover:translate-y-[-1px] md:min-w-44"
+                  className="min-h-16 rounded-[22px] bg-[linear-gradient(135deg,#7b6cff,#9384ff)] px-8 text-base font-semibold text-white shadow-[0_20px_38px_rgba(112,92,255,0.28)] transition hover:translate-y-[-1px] md:min-w-[11rem]"
                   type="button"
                 >
                   Download
@@ -235,7 +235,7 @@ export default function Home() {
               key={feature.id}
               className="surface-card rounded-[30px] px-6 py-8 text-center"
             >
-              <div className="mx-auto flex h-18 w-18 items-center justify-center rounded-[24px] bg-[linear-gradient(135deg,#6b5cff,#98adff)] text-xl font-bold text-white shadow-[0_16px_30px_rgba(107,92,255,0.24)]">
+              <div className="mx-auto flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-[24px] bg-[linear-gradient(135deg,#6b5cff,#98adff)] text-xl font-bold text-white shadow-[0_16px_30px_rgba(107,92,255,0.24)]">
                 {feature.id}
               </div>
               <h2 className="font-display mt-6 text-3xl font-bold text-[#241c4c]">
