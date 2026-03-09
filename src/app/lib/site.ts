@@ -1,8 +1,8 @@
 export const siteName = 'Insta Downloader';
 export const siteTitle =
-  'Instagram Downloader | Download Reels, Videos, Photos and Carousels';
+  'Media Downloader | Download Public Instagram, YouTube, TikTok, Facebook, X and Pinterest Links';
 export const siteDescription =
-  'Free online Instagram downloader for public reels, videos, photos, IGTV, and carousel posts. Paste an Instagram link and download media instantly on desktop or mobile.';
+  'Free online media downloader for public Instagram, YouTube, TikTok, Facebook, X, and Pinterest links. Paste a supported media URL and download videos or images instantly.';
 export const siteKeywords = [
   'instagram downloader',
   'download instagram reel',

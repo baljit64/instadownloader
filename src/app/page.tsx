@@ -38,7 +38,7 @@ const floatingBadges: { className: string; icon: IconGlyphName }[] = [
 
 const supportTicker = [
   "POPULAR",
-  "INSTAGRAM",
+  "MULTI-PLATFORM",
   "DOWNLOADS",
   "FAST",
   "SECURE",
@@ -66,42 +66,42 @@ const websiteTiles = [
     icon: "/social/instagram.svg",
     status: "Live now",
     statusTone: "bg-emerald-100 text-emerald-700",
-    description: "Public post, reel, IGTV, and carousel downloads are available in the current build.",
+    description: "Public post, reel, IGTV, and carousel downloads use the native extractor in the current build.",
   },
   {
     label: "TikTok",
     icon: "/social/tiktok.svg",
-    status: "Planned",
-    statusTone: "bg-slate-100 text-slate-700",
-    description: "Included as a popular platform card so the layout can scale without overstating support.",
+    status: "Beta",
+    statusTone: "bg-amber-100 text-amber-700",
+    description: "Best-effort public URL support is wired through the universal extractor, but some posts may still fail upstream.",
   },
   {
     label: "YouTube",
     icon: "/social/youtube.svg",
-    status: "Planned",
-    statusTone: "bg-slate-100 text-slate-700",
-    description: "Shows future expansion space for longer-form video sources in the same card system.",
+    status: "Beta",
+    statusTone: "bg-amber-100 text-amber-700",
+    description: "Public video URLs are resolved through the universal extractor with direct-source download links.",
   },
   {
     label: "Facebook",
     icon: "/social/facebook.svg",
-    status: "Planned",
-    statusTone: "bg-slate-100 text-slate-700",
-    description: "Added as a recognizable website tile while keeping the actual downloader logic unchanged.",
+    status: "Beta",
+    statusTone: "bg-amber-100 text-amber-700",
+    description: "Public videos can be resolved through the same backend path used for the other beta platforms.",
   },
   {
     label: "X / Twitter",
     icon: "/social/x.svg",
-    status: "Planned",
-    statusTone: "bg-slate-100 text-slate-700",
-    description: "Marks a common social source users expect to see in a multi-platform downloader roadmap.",
+    status: "Beta",
+    statusTone: "bg-amber-100 text-amber-700",
+    description: "Best-effort public media support is enabled, with results depending on what the extractor can resolve.",
   },
   {
     label: "Pinterest",
     icon: "/social/pinterest.svg",
-    status: "Planned",
-    statusTone: "bg-slate-100 text-slate-700",
-    description: "Rounds out the visual support grid with another familiar media-focused website.",
+    status: "Beta",
+    statusTone: "bg-amber-100 text-amber-700",
+    description: "Public image and media pages now flow through the universal extractor with HTML meta fallbacks.",
   },
 ];
 
@@ -123,7 +123,7 @@ export default function Home() {
                 <p className="font-display text-lg font-bold tracking-tight text-white">
                   Insta Downloader
                 </p>
-                <p className="text-xs text-white/55">Fast public Instagram media fetch</p>
+                <p className="text-xs text-white/55">Fast public media fetch</p>
               </div>
             </a>
 
@@ -170,7 +170,7 @@ export default function Home() {
             </div>
 
             <h1 className="font-display max-w-4xl text-4xl font-bold leading-tight tracking-tight text-[#13151f] sm:text-5xl lg:text-[4.4rem]">
-              Instagram{" "}
+              Public Media{" "}
               <span className="relative inline-block text-[#2d7cff]">
                 Downloader
                 <span className="hero-title-underline" />
@@ -178,8 +178,8 @@ export default function Home() {
             </h1>
 
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[#6e6a86] sm:text-xl">
-              Free online Instagram downloader for posts, reels, IGTV, and carousel
-              media from public links.
+              Free online downloader for public Instagram, YouTube, TikTok,
+              Facebook, X, and Pinterest media links.
             </p>
 
             <HeroDownloadForm formats={formats} />
@@ -191,12 +191,12 @@ export default function Home() {
             Our Features
           </span>
           <h2 className="font-display mt-4 text-4xl font-bold text-[#171923]">
-            Effortless Instagram downloads at your fingertips
+            Effortless public media downloads at your fingertips
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[#726a92]">
-            The design changed, but the working behavior stayed the same: paste a valid
-            Instagram URL, validate it with `antd`, fetch the media, and download from
-            the preview cards.
+            Paste a supported public media URL, resolve it through the downloader,
+            preview the available files, and download them directly from the results
+            cards.
           </p>
 
           <div className="mt-10 grid gap-5 md:grid-cols-3">

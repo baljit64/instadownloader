@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Card, Tag } from 'antd';
-import type { InstagramMediaItem } from '../lib/instagram';
+import type { MediaItem } from '../lib/media';
 
 interface InstagramMediaPreviewGridProps {
-  media: InstagramMediaItem[];
+  media: MediaItem[];
 }
 
 export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPreviewGridProps) {
@@ -19,8 +19,13 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
   const getProxyUrl = (url: string) =>
     `/api/instagram-download-proxy?url=${encodeURIComponent(url)}`;
 
-  const getImagePreviewUrl = (item: InstagramMediaItem, index: number) =>
-    imagePreviewMode[index] === 'direct' ? item.url : getProxyUrl(item.url);
+  const getImagePreviewUrl = (item: MediaItem, index: number) => {
+    if (item.provider !== 'instagram') {
+      return item.url;
+    }
+
+    return imagePreviewMode[index] === 'direct' ? item.url : getProxyUrl(item.url);
+  };
 
   const handleImagePreviewError = (index: number) => {
     setImagePreviewMode((prev) => {
@@ -38,8 +43,20 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
     });
   };
 
-  const handleDownload = async (item: InstagramMediaItem, index: number) => {
+  const handleDownload = async (item: MediaItem, index: number) => {
     setDownloading((prev) => ({ ...prev, [index]: true }));
+
+    if (item.provider && item.provider !== 'instagram') {
+      const anchor = document.createElement('a');
+      anchor.href = item.url;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      setDownloading((prev) => ({ ...prev, [index]: false }));
+      return;
+    }
 
     try {
       const proxyUrl = getProxyUrl(item.url);
@@ -77,14 +94,22 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
         >
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#241c4c]">Media {index + 1}</h3>
-            <Tag color={item.type === 'video' ? 'processing' : 'success'}>
-              {item.type.toUpperCase()}
-            </Tag>
+            <div className="flex items-center gap-2">
+              {item.provider ? <Tag>{item.provider.toUpperCase()}</Tag> : null}
+              <Tag color={item.type === 'video' ? 'processing' : 'success'}>
+                {item.type.toUpperCase()}
+              </Tag>
+            </div>
           </div>
 
           <div className="mb-4 overflow-hidden rounded-[20px] bg-[#f5f1ff]">
             {item.type === 'video' ? (
-              <video controls src={item.url} className="h-56 w-full object-cover" />
+              <video
+                controls
+                poster={item.thumbnailUrl}
+                src={item.url}
+                className="h-56 w-full object-cover"
+              />
             ) : imagePreviewMode[index] === 'unavailable' ? (
               <div className="flex h-56 w-full items-center justify-center bg-[linear-gradient(135deg,#f7f2ff,#ece8ff)] px-6 text-center text-sm font-medium text-[#6f6893]">
                 Image preview unavailable. Use download to fetch the original file.

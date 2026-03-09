@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { Alert, Button, Form, Input } from 'antd';
-import type { InstagramMediaItem } from '../lib/instagram';
 import {
-  isValidInstagramPostUrl,
-  normalizeInstagramPostUrl,
-} from '../lib/instagram';
+  isSupportedMediaUrl,
+  normalizeSupportedMediaUrl,
+  type MediaItem,
+} from '../lib/media';
 import IconGlyph from './IconGlyph';
 import InstagramMediaPreviewGrid from './InstagramMediaPreviewGrid';
 
@@ -21,7 +21,7 @@ interface FormValues {
 }
 
 interface ApiSuccessResponse {
-  media?: InstagramMediaItem[];
+  media?: MediaItem[];
 }
 
 interface ApiErrorResponse {
@@ -32,20 +32,20 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
   const [form] = Form.useForm<FormValues>();
   const [status, setStatus] = useState<DownloaderStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-  const [media, setMedia] = useState<InstagramMediaItem[]>([]);
+  const [media, setMedia] = useState<MediaItem[]>([]);
 
   const isLoading = status === 'loading';
 
   async function handleFinish(values: FormValues) {
-    const normalizedUrl = normalizeInstagramPostUrl(values.url);
+    const normalizedUrl = normalizeSupportedMediaUrl(values.url);
 
     form.setFieldsValue({ url: normalizedUrl });
     setStatus('loading');
     setErrorMessage('');
-    setMedia([]);
+      setMedia([]);
 
     try {
-      const response = await fetch('/api/instagram-download', {
+      const response = await fetch('/api/media-extract', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,11 +60,11 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
       }
 
       const mediaItems = Array.isArray((data as ApiSuccessResponse).media)
-        ? ((data as ApiSuccessResponse).media as InstagramMediaItem[])
+        ? ((data as ApiSuccessResponse).media as MediaItem[])
         : [];
 
       if (!mediaItems.length) {
-        throw new Error('No downloadable media was found for this Instagram URL.');
+        throw new Error('No downloadable media was found for this URL.');
       }
 
       setMedia(mediaItems);
@@ -72,7 +72,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
     } catch (error) {
       setStatus('error');
       setErrorMessage(
-        error instanceof Error ? error.message : 'Unable to fetch Instagram media.'
+        error instanceof Error ? error.message : 'Unable to fetch media.'
       );
     }
   }
@@ -103,16 +103,16 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
               rules={[
                 {
                   required: true,
-                  message: 'Paste an Instagram post or reel URL first.',
+                  message: 'Paste a supported public media URL first.',
                 },
                 {
                   validator: async (_, value: string | undefined) => {
-                    if (!value || isValidInstagramPostUrl(value)) {
+                    if (!value || isSupportedMediaUrl(value)) {
                       return;
                     }
 
                     throw new Error(
-                      'Enter a valid public Instagram post, reel, or IGTV link.'
+                      'Use a public Instagram, YouTube, TikTok, Facebook, X, or Pinterest link.'
                     );
                   },
                 },
@@ -122,7 +122,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
                 allowClear
                 autoComplete="off"
                 className="hero-download-input !w-full"
-                placeholder="Paste the Instagram link here"
+                placeholder="Paste the media link here"
                 prefix={<span>URL</span>}
                 size="large"
               />
@@ -181,7 +181,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
               No login required
             </span>
             <span className="rounded-full border border-white/80 bg-white/75 px-3 py-1.5 font-medium shadow-[0_8px_18px_rgba(104,84,255,0.06)]">
-              Public URLs only
+              Instagram, YouTube, TikTok, Facebook, X, Pinterest
             </span>
           </div>
 
