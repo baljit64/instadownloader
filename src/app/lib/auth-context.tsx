@@ -22,13 +22,12 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => Boolean(supabase));
 
   useEffect(() => {
     let mounted = true;
 
     if (!supabase) {
-      setLoading(false);
       return () => {
         mounted = false;
       };

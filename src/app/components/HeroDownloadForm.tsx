@@ -7,6 +7,7 @@ import {
   isValidInstagramPostUrl,
   normalizeInstagramPostUrl,
 } from '../lib/instagram';
+import IconGlyph from './IconGlyph';
 import InstagramMediaPreviewGrid from './InstagramMediaPreviewGrid';
 
 type DownloaderStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -131,7 +132,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
               aria-hidden="true"
               className="hero-download-helper-icon"
             >
-              @
+              <IconGlyph name="link" className="h-5 w-5" />
             </span>
 
             <Button
@@ -162,7 +163,9 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
         </div>
 
         <div className="hero-promo-banner mt-6">
-          <div className="hero-promo-mark">ID</div>
+          <div className="hero-promo-mark" aria-hidden="true">
+            <IconGlyph name="download" className="h-8 w-8" />
+          </div>
           <div>
             <p className="text-lg font-semibold text-white">Instagram Downloader</p>
             <p className="text-sm text-white/70">

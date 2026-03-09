@@ -1,4 +1,6 @@
+import Image from "next/image";
 import HeroDownloadForm from "./components/HeroDownloadForm";
+import IconGlyph, { type IconGlyphName } from "./components/IconGlyph";
 
 const navigation = ["Home", "How to use", "FAQs"];
 
@@ -25,13 +27,13 @@ const features = [
   },
 ];
 
-const floatingBadges = [
-  { label: "IG", className: "left-2 top-[4.5rem] bg-[linear-gradient(135deg,#ff7b72,#ff3fa4)] text-white lg:left-[-1.5rem]" },
-  { label: "RL", className: "left-20 top-5 bg-[linear-gradient(135deg,#6f61ff,#9b8cff)] text-white" },
-  { label: "TV", className: "right-8 top-14 bg-white text-[#12131b]" },
-  { label: "DL", className: "right-[4.5rem] top-52 bg-[#2d7cff] text-white" },
-  { label: "CR", className: "left-4 top-60 bg-[#2374e1] text-white lg:left-[-1rem]" },
-  { label: "PX", className: "right-6 top-80 bg-[#ff3c7a] text-white lg:right-[-0.75rem]" },
+const floatingBadges: { className: string; icon: IconGlyphName }[] = [
+  { icon: "instagram", className: "left-2 top-[4.5rem] bg-[linear-gradient(135deg,#ff7b72,#ff3fa4)] text-white lg:left-[-1.5rem]" },
+  { icon: "reel", className: "left-20 top-5 bg-[linear-gradient(135deg,#6f61ff,#9b8cff)] text-white" },
+  { icon: "tv", className: "right-8 top-14 bg-white text-[#12131b]" },
+  { icon: "download", className: "right-[4.5rem] top-52 bg-[#2d7cff] text-white" },
+  { icon: "carousel", className: "left-4 top-60 bg-[#2374e1] text-white lg:left-[-1rem]" },
+  { icon: "proxy", className: "right-6 top-80 bg-[#ff3c7a] text-white lg:right-[-0.75rem]" },
 ];
 
 const supportTicker = [
@@ -43,19 +45,64 @@ const supportTicker = [
   "PREVIEW",
 ];
 
-const supportTiles = [
-  { label: "Instagram Post", tag: "IG", accent: "bg-[linear-gradient(135deg,#ff8a5b,#ff4f9b)] text-white" },
-  { label: "Instagram Reel", tag: "RL", accent: "bg-[linear-gradient(135deg,#111827,#2d7cff)] text-white" },
-  { label: "IGTV", tag: "TV", accent: "bg-[linear-gradient(135deg,#6f61ff,#8ba3ff)] text-white" },
-  { label: "Carousel", tag: "CR", accent: "bg-[linear-gradient(135deg,#0ea5e9,#38bdf8)] text-white" },
-  { label: "Public URL", tag: "URL", accent: "bg-[linear-gradient(135deg,#334155,#0f172a)] text-white" },
-  { label: "Direct Preview", tag: "PV", accent: "bg-[linear-gradient(135deg,#10b981,#22c55e)] text-white" },
-  { label: "Proxy Download", tag: "PX", accent: "bg-[linear-gradient(135deg,#f97316,#fb7185)] text-white" },
-  { label: "Mobile Ready", tag: "MB", accent: "bg-[linear-gradient(135deg,#2563eb,#60a5fa)] text-white" },
-  { label: "Desktop Ready", tag: "DT", accent: "bg-[linear-gradient(135deg,#7c3aed,#c084fc)] text-white" },
-  { label: "Fast Fetch", tag: "FF", accent: "bg-[linear-gradient(135deg,#0f766e,#14b8a6)] text-white" },
-  { label: "Clean Results", tag: "RS", accent: "bg-[linear-gradient(135deg,#ec4899,#fb7185)] text-white" },
-  { label: "API Ready", tag: "API", accent: "bg-[linear-gradient(135deg,#1d4ed8,#2563eb)] text-white" },
+const supportTiles: { accent: string; icon: IconGlyphName; label: string }[] = [
+  { label: "Instagram Post", icon: "post", accent: "bg-[linear-gradient(135deg,#ff8a5b,#ff4f9b)] text-white" },
+  { label: "Instagram Reel", icon: "reel", accent: "bg-[linear-gradient(135deg,#111827,#2d7cff)] text-white" },
+  { label: "IGTV", icon: "tv", accent: "bg-[linear-gradient(135deg,#6f61ff,#8ba3ff)] text-white" },
+  { label: "Carousel", icon: "carousel", accent: "bg-[linear-gradient(135deg,#0ea5e9,#38bdf8)] text-white" },
+  { label: "Public URL", icon: "link", accent: "bg-[linear-gradient(135deg,#334155,#0f172a)] text-white" },
+  { label: "Direct Preview", icon: "preview", accent: "bg-[linear-gradient(135deg,#10b981,#22c55e)] text-white" },
+  { label: "Proxy Download", icon: "download", accent: "bg-[linear-gradient(135deg,#f97316,#fb7185)] text-white" },
+  { label: "Mobile Ready", icon: "mobile", accent: "bg-[linear-gradient(135deg,#2563eb,#60a5fa)] text-white" },
+  { label: "Desktop Ready", icon: "desktop", accent: "bg-[linear-gradient(135deg,#7c3aed,#c084fc)] text-white" },
+  { label: "Fast Fetch", icon: "fast", accent: "bg-[linear-gradient(135deg,#0f766e,#14b8a6)] text-white" },
+  { label: "Clean Results", icon: "sparkles", accent: "bg-[linear-gradient(135deg,#ec4899,#fb7185)] text-white" },
+  { label: "API Ready", icon: "code", accent: "bg-[linear-gradient(135deg,#1d4ed8,#2563eb)] text-white" },
+];
+
+const websiteTiles = [
+  {
+    label: "Instagram",
+    icon: "/social/instagram.svg",
+    status: "Live now",
+    statusTone: "bg-emerald-100 text-emerald-700",
+    description: "Public post, reel, IGTV, and carousel downloads are available in the current build.",
+  },
+  {
+    label: "TikTok",
+    icon: "/social/tiktok.svg",
+    status: "Planned",
+    statusTone: "bg-slate-100 text-slate-700",
+    description: "Included as a popular platform card so the layout can scale without overstating support.",
+  },
+  {
+    label: "YouTube",
+    icon: "/social/youtube.svg",
+    status: "Planned",
+    statusTone: "bg-slate-100 text-slate-700",
+    description: "Shows future expansion space for longer-form video sources in the same card system.",
+  },
+  {
+    label: "Facebook",
+    icon: "/social/facebook.svg",
+    status: "Planned",
+    statusTone: "bg-slate-100 text-slate-700",
+    description: "Added as a recognizable website tile while keeping the actual downloader logic unchanged.",
+  },
+  {
+    label: "X / Twitter",
+    icon: "/social/x.svg",
+    status: "Planned",
+    statusTone: "bg-slate-100 text-slate-700",
+    description: "Marks a common social source users expect to see in a multi-platform downloader roadmap.",
+  },
+  {
+    label: "Pinterest",
+    icon: "/social/pinterest.svg",
+    status: "Planned",
+    statusTone: "bg-slate-100 text-slate-700",
+    description: "Rounds out the visual support grid with another familiar media-focused website.",
+  },
 ];
 
 export default function Home() {
@@ -102,19 +149,24 @@ export default function Home() {
 
           <div className="hero-soft-disc" />
 
-          {floatingBadges.map((item) => (
+          {floatingBadges.map((item, index) => (
             <div
-              key={item.label}
+              key={`${item.icon}-${index}`}
               className={`floating-social-badge ${item.className}`}
+              aria-hidden="true"
             >
-              {item.label}
+              <IconGlyph name={item.icon} className="h-8 w-8" />
             </div>
           ))}
 
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
             <div className="mb-6 flex items-center gap-5">
-              <div className="hero-brand-badge hero-brand-badge-instagram">IG</div>
-              <div className="hero-brand-badge hero-brand-badge-primary">DL</div>
+              <div className="hero-brand-badge hero-brand-badge-instagram" aria-hidden="true">
+                <IconGlyph name="instagram" className="h-10 w-10" strokeWidth={1.8} />
+              </div>
+              <div className="hero-brand-badge hero-brand-badge-primary" aria-hidden="true">
+                <IconGlyph name="download" className="h-10 w-10" strokeWidth={1.8} />
+              </div>
             </div>
 
             <h1 className="font-display max-w-4xl text-4xl font-bold leading-tight tracking-tight text-[#13151f] sm:text-5xl lg:text-[4.4rem]">
@@ -194,13 +246,56 @@ export default function Home() {
                 className="rounded-[24px] border border-white/80 bg-white/76 px-5 py-6 text-left shadow-[0_18px_40px_rgba(118,99,255,0.08)]"
               >
                 <div className={`flex h-14 w-14 items-center justify-center rounded-[18px] text-sm font-bold ${tile.accent}`}>
-                  {tile.tag}
+                  <IconGlyph name={tile.icon} className="h-7 w-7" />
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-[#171923]">{tile.label}</h3>
                 <p className="mt-2 text-sm leading-6 text-[#726a92]">
                   Styled as a supported tile while staying aligned with the current
                   Instagram-only functionality.
                 </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="surface-card rounded-[38px] px-6 py-10 text-center sm:px-8">
+          <span className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
+            Popular Websites
+          </span>
+          <h2 className="font-display mt-4 text-4xl font-bold text-[#171923]">
+            Website support snapshot
+          </h2>
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#726a92]">
+            Instagram is the active integration right now. The other cards are shown as
+            roadmap placeholders so the page can highlight popular websites without
+            suggesting those downloads already work.
+          </p>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {websiteTiles.map((tile) => (
+              <article
+                key={tile.label}
+                className="rounded-[28px] border border-white/80 bg-white/76 px-5 py-6 text-left shadow-[0_18px_40px_rgba(118,99,255,0.08)]"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-[#f5f7ff] shadow-[inset_0_0_0_1px_rgba(214,223,255,0.9)]">
+                    <Image
+                      src={tile.icon}
+                      alt=""
+                      width={40}
+                      height={40}
+                      unoptimized
+                      className="h-10 w-10 object-contain"
+                    />
+                  </div>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${tile.statusTone}`}
+                  >
+                    {tile.status}
+                  </span>
+                </div>
+                <h3 className="mt-5 text-lg font-semibold text-[#171923]">{tile.label}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#726a92]">{tile.description}</p>
               </article>
             ))}
           </div>
