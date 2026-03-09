@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button, Card, Tag } from 'antd';
-import type { InstagramMediaItem } from '@/lib/instagram';
+import type { InstagramMediaItem } from '../lib/instagram';
 
 interface InstagramMediaPreviewGridProps {
   media: InstagramMediaItem[];
@@ -45,15 +45,17 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
       {media.map((item, index) => (
         <Card
           key={`${item.type}-${index}`}
-          className="overflow-hidden rounded-2xl border border-slate-200 shadow-sm"
+          className="hero-media-card overflow-hidden rounded-[28px] border border-white/70 bg-white/80 shadow-[0_20px_48px_rgba(110,91,243,0.12)]"
           bodyStyle={{ padding: 12 }}
         >
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-800">Media {index + 1}</h3>
-            <Tag color={item.type === 'video' ? 'blue' : 'green'}>{item.type.toUpperCase()}</Tag>
+            <h3 className="text-sm font-semibold text-[#241c4c]">Media {index + 1}</h3>
+            <Tag color={item.type === 'video' ? 'processing' : 'success'}>
+              {item.type.toUpperCase()}
+            </Tag>
           </div>
 
-          <div className="mb-4 overflow-hidden rounded-xl bg-slate-100">
+          <div className="mb-4 overflow-hidden rounded-[20px] bg-[#f5f1ff]">
             {item.type === 'video' ? (
               <video controls src={item.url} className="h-56 w-full object-cover" />
             ) : (
@@ -66,7 +68,7 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
             type="primary"
             block
             loading={downloading[index]}
-            className="bg-[#e5322d] hover:!bg-[#cc2723]"
+            className="hero-media-download-button"
             onClick={() => handleDownload(item, index)}
           >
             {downloading[index] ? 'Downloading...' : 'Download'}
