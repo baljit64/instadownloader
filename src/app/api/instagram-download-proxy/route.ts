@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getProxyAxiosConfig } from '@/app/lib/server/proxy';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -7,6 +8,7 @@ const ALLOWED_HOSTS =
   /(?:cdninstagram\.com|scontent[-._a-z0-9]*\.fbcdn\.net|fbcdn\.net|instagram\.com)/i;
 
 const TIMEOUT_MS = 30_000;
+const PROXY_AXIOS_CONFIG = getProxyAxiosConfig();
 
 export async function GET(request: NextRequest) {
   const mediaUrl = request.nextUrl.searchParams.get('url');
@@ -28,6 +30,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const upstream = await axios.get(mediaUrl, {
+      ...PROXY_AXIOS_CONFIG,
       responseType: 'arraybuffer',
       timeout: TIMEOUT_MS,
       headers: {

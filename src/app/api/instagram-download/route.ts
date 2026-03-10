@@ -1,4 +1,5 @@
 import { InstagramMediaItem, isValidInstagramPostUrl, normalizeInstagramPostUrl } from '@/app/lib/instagram';
+import { getProxyAxiosConfig } from '@/app/lib/server/proxy';
 import axios, { type AxiosResponse } from 'axios';
 import { load } from 'cheerio';
 import { NextRequest, NextResponse } from 'next/server';
@@ -16,6 +17,7 @@ interface InstagramParseResult {
 }
 
 const REQUEST_TIMEOUT_MS = 18000;
+const PROXY_AXIOS_CONFIG = getProxyAxiosConfig();
 
 const REQUEST_HEADERS = {
   'User-Agent':
@@ -537,6 +539,7 @@ function extractFromJsonEndpoint(targetUrl: string): Promise<InstagramParseResul
 
     for (const candidateUrl of new Set(candidates.filter(Boolean))) {
       const response = await axios.get<string>(candidateUrl, {
+        ...PROXY_AXIOS_CONFIG,
         headers: {
           ...REQUEST_HEADERS,
           Accept: 'application/json,text/plain,*/*',
@@ -615,6 +618,7 @@ function extractFromDirectEndpoint(shortcode: string, postType: 'p' | 'reel' | '
     const directUrl = `https://www.instagram.com/${basePath}/${shortcode}/media/?size=l`;
 
     const response = await axios.get<string>(directUrl, {
+      ...PROXY_AXIOS_CONFIG,
       headers: {
         ...REQUEST_HEADERS,
         Referer: 'https://www.instagram.com/',
@@ -667,6 +671,7 @@ function extractFromEmbedPage(targetUrl: string): Promise<InstagramParseResult> 
     const embedUrl = `https://www.instagram.com${cleanPath}/embed/captioned/`;
 
     const response = await axios.get<string>(embedUrl, {
+      ...PROXY_AXIOS_CONFIG,
       headers: {
         ...EMBED_REQUEST_HEADERS,
         Referer: 'https://www.instagram.com/',
@@ -760,6 +765,7 @@ async function extractFromGraphQL(shortcode: string): Promise<InstagramParseResu
           doc_id: docId,
         }).toString(),
         {
+          ...PROXY_AXIOS_CONFIG,
           headers: {
             'User-Agent': REQUEST_HEADERS['User-Agent'],
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -832,6 +838,7 @@ async function extractFromOEmbed(targetUrl: string): Promise<InstagramParseResul
     const response = await axios.get(
       `https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(targetUrl)}`,
       {
+        ...PROXY_AXIOS_CONFIG,
         headers: REQUEST_HEADERS,
         timeout: REQUEST_TIMEOUT_MS,
         validateStatus: () => true,
@@ -924,6 +931,7 @@ function extractShortcode(incomingUrl: string): string | null {
 
 async function fetchInstagramHtml(targetUrl: string): Promise<AxiosResponse<string>> {
   return axios.get<string>(targetUrl, {
+    ...PROXY_AXIOS_CONFIG,
     headers: {
       ...REQUEST_HEADERS,
       Referer: 'https://www.instagram.com/',

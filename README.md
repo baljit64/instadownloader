@@ -34,3 +34,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Webshare Stats
+
+Set `WEBSHARE_API_KEY` in your local or deployed server environment to enable the
+internal proxy usage page at `/proxy-stats`.
+
+Optional:
+
+- `WEBSHARE_PLAN_ID` limits the query to one Webshare plan when your account has more
+  than one.
+- `WEB_SHARE_PROXY_HOST`, `WEB_SHARE_PROXY_PORT`, `WEB_SHARE_PROXY_USERNAME`, and
+  `WEB_SHARE_PROXY_PASSWORD` keep the Instagram downloader itself routed through
+  Webshare.

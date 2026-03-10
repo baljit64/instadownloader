@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Image from "next/image";
 import HeroDownloadForm from "./components/HeroDownloadForm";
 import IconGlyph, { type IconGlyphName } from "./components/IconGlyph";
@@ -298,6 +299,15 @@ export default function Home() {
                 <p className="mt-2 text-sm leading-6 text-[#726a92]">{tile.description}</p>
               </article>
             ))}
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <Link
+              href="/proxy-stats"
+              className="inline-flex items-center justify-center rounded-full border border-[rgba(45,124,255,0.2)] bg-white/80 px-5 py-3 text-sm font-semibold text-[#171923] shadow-[0_14px_28px_rgba(45,124,255,0.08)] transition hover:border-[#2d7cff] hover:text-[#2d7cff]"
+            >
+              Open proxy stats
+            </Link>
           </div>
         </section>
       </main>
