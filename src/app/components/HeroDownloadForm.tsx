@@ -1,18 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { lazy, Suspense, useDeferredValue, useState } from 'react';
 import { Alert, Button, Form, Input } from 'antd';
 import {
+  detectSupportedPlatform,
   isSupportedMediaUrl,
   normalizeSupportedMediaUrl,
+  supportedPlatformLabels,
   type MediaItem,
+  type SupportedPlatform,
 } from '../lib/media';
+import type { TranslationDictionary } from '../lib/i18n';
 import IconGlyph from './IconGlyph';
-import InstagramMediaPreviewGrid from './InstagramMediaPreviewGrid';
+
+const InstagramMediaPreviewGrid = lazy(() => import('./InstagramMediaPreviewGrid'));
 
 type DownloaderStatus = 'idle' | 'loading' | 'success' | 'error';
 
 interface HeroDownloadFormProps {
+  copy: TranslationDictionary['hero'];
   formats: string[];
 }
 
@@ -28,11 +34,112 @@ interface ApiErrorResponse {
   error?: string;
 }
 
-export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
+const providerTextHints: Array<[SupportedPlatform, string[]]> = [
+  ['instagram', ['instagram.com', 'instagr.am']],
+  ['youtube', ['youtube.com', 'youtu.be']],
+  ['tiktok', ['tiktok.com']],
+  ['facebook', ['facebook.com', 'fb.watch']],
+  ['x', ['x.com', 'twitter.com']],
+  ['pinterest', ['pinterest.com', 'pin.it']],
+];
+
+function detectTypedPlatformHint(value: string): SupportedPlatform | null {
+  const directDetection = detectSupportedPlatform(value);
+  if (directDetection) {
+    return directDetection;
+  }
+
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) {
+    return null;
+  }
+
+  for (const [platform, hints] of providerTextHints) {
+    if (hints.some((hint) => normalized.includes(hint))) {
+      return platform;
+    }
+  }
+
+  return null;
+}
+
+function getAssistantState(copy: TranslationDictionary['hero'], value: string) {
+  const trimmed = value.trim();
+  const provider = detectTypedPlatformHint(trimmed);
+  const looksLikeUrl = /^https?:\/\//i.test(trimmed);
+
+  if (!trimmed) {
+    return {
+      chips: copy.aiAssist.standbyChips,
+      message: copy.aiAssist.standbyMessage,
+      title: copy.aiAssist.standbyTitle,
+      tone: 'neutral' as const,
+    };
+  }
+
+  if (provider) {
+    return {
+      chips: [
+        supportedPlatformLabels[provider],
+        provider === 'instagram'
+          ? copy.aiAssist.nativeExtractor
+          : copy.aiAssist.universalExtractor,
+        copy.aiAssist.previewFlow,
+      ],
+      message:
+        provider === 'instagram'
+          ? copy.aiAssist.nativeMessage
+          : copy.aiAssist.universalMessage,
+      title: `${supportedPlatformLabels[provider]} ${copy.aiAssist.recognizedSuffix}`,
+      tone: 'ready' as const,
+    };
+  }
+
+  if (looksLikeUrl) {
+    return {
+      chips: copy.aiAssist.unsupportedChips,
+      message: copy.aiAssist.unsupportedMessage,
+      title: copy.aiAssist.unsupportedTitle,
+      tone: 'warning' as const,
+    };
+  }
+
+  return {
+    chips: copy.aiAssist.inputChips,
+    message: copy.aiAssist.inputMessage,
+    title: copy.aiAssist.inputTitle,
+    tone: 'neutral' as const,
+  };
+}
+
+function MediaPreviewGridFallback() {
+  return (
+    <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div
+          key={index}
+          className="hero-media-card overflow-hidden rounded-[28px] border border-white/70 bg-white/80 p-3 shadow-[0_20px_48px_rgba(110,91,243,0.12)]"
+        >
+          <div className="mb-3 flex items-center justify-between">
+            <div className="h-4 w-20 animate-pulse rounded-full bg-[#ddd5ff]" />
+            <div className="h-6 w-16 animate-pulse rounded-full bg-[#ebe6ff]" />
+          </div>
+          <div className="mb-4 h-56 animate-pulse rounded-[20px] bg-[linear-gradient(135deg,#f4efff,#ece8ff)]" />
+          <div className="h-11 animate-pulse rounded-full bg-[linear-gradient(135deg,#7f71ff,#9b8cff)] opacity-75" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProps) {
   const [form] = Form.useForm<FormValues>();
   const [status, setStatus] = useState<DownloaderStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [media, setMedia] = useState<MediaItem[]>([]);
+  const watchedUrl = Form.useWatch('url', form) ?? '';
+  const deferredUrl = useDeferredValue(watchedUrl);
+  const assistantState = getAssistantState(copy, deferredUrl);
 
   const isLoading = status === 'loading';
 
@@ -42,7 +149,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
     form.setFieldsValue({ url: normalizedUrl });
     setStatus('loading');
     setErrorMessage('');
-      setMedia([]);
+    setMedia([]);
 
     try {
       const response = await fetch('/api/media-extract', {
@@ -56,7 +163,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
       const data = (await response.json()) as ApiSuccessResponse | ApiErrorResponse;
 
       if (!response.ok) {
-        throw new Error((data as ApiErrorResponse).error || 'Unable to fetch Instagram media.');
+        throw new Error((data as ApiErrorResponse).error || copy.errors.fetchFailure);
       }
 
       const mediaItems = Array.isArray((data as ApiSuccessResponse).media)
@@ -64,7 +171,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
         : [];
 
       if (!mediaItems.length) {
-        throw new Error('No downloadable media was found for this URL.');
+        throw new Error(copy.errors.noMediaFound);
       }
 
       setMedia(mediaItems);
@@ -72,7 +179,7 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
     } catch (error) {
       setStatus('error');
       setErrorMessage(
-        error instanceof Error ? error.message : 'Unable to fetch media.'
+        error instanceof Error ? error.message : copy.errors.fetchFailure
       );
     }
   }
@@ -86,72 +193,95 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
   }
 
   return (
-    <div className="mt-10 w-full max-w-3xl">
+    <div className="mx-auto mt-10 w-full max-w-3xl">
       <div className="hero-download-shell">
         <Form<FormValues>
           form={form}
-          className="hero-download-form"
+          className="hero-download-form w-full"
           onFinish={handleFinish}
           onValuesChange={handleValuesChange}
           requiredMark={false}
           validateTrigger={['onChange', 'onBlur', 'onSubmit']}
         >
-          <div className="hero-search-frame flex flex-col gap-3 md:flex-row md:items-start">
-            <Form.Item<FormValues>
-              className="hero-download-field !mb-0 flex-1"
-              name="url"
-              rules={[
-                {
-                  required: true,
-                  message: 'Paste a supported public media URL first.',
-                },
-                {
-                  validator: async (_, value: string | undefined) => {
-                    if (!value || isSupportedMediaUrl(value)) {
-                      return;
-                    }
-
-                    throw new Error(
-                      'Use a public Instagram, YouTube, TikTok, Facebook, X, or Pinterest link.'
-                    );
+          <div className="hero-search-surface">
+            <div className="hero-search-frame flex flex-col gap-3 md:flex-row md:items-center">
+              <Form.Item<FormValues>
+                className="hero-download-field !mb-0 flex-1"
+                help={null}
+                name="url"
+                rules={[
+                  {
+                    required: true,
+                    message: copy.validations.required,
                   },
-                },
-              ]}
-            >
-              <Input
-                allowClear
-                autoComplete="off"
-                className="hero-download-input !w-full"
-                placeholder="Paste the media link here"
-                prefix={<span>URL</span>}
-                size="large"
-              />
-            </Form.Item>
+                  {
+                    validator: async (_, value: string | undefined) => {
+                      if (!value || isSupportedMediaUrl(value)) {
+                        return;
+                      }
 
-            <span
-              aria-hidden="true"
-              className="hero-download-helper-icon"
-            >
-              <IconGlyph name="link" className="h-5 w-5" />
-            </span>
+                      throw new Error(copy.validations.unsupported);
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  allowClear
+                  autoComplete="off"
+                  className="hero-download-input !w-full"
+                  placeholder={copy.inputPlaceholder}
+                  prefix={<IconGlyph name="link" className="h-4 w-4" />}
+                  size="large"
+                />
+              </Form.Item>
 
-            <Button
-              className="hero-download-button w-full md:w-auto"
-              htmlType="submit"
-              loading={isLoading}
-              type="primary"
-            >
-              {isLoading ? 'Downloading...' : 'Download'}
-            </Button>
+              <Button
+                className="hero-download-button w-full md:w-auto"
+                htmlType="submit"
+                loading={isLoading}
+                type="primary"
+              >
+                {isLoading ? copy.buttonLoading : copy.buttonDownload}
+              </Button>
+            </div>
+
+            <div className="hero-search-caption">
+              <span>{copy.moreOptions}</span>
+              <span aria-hidden="true">v</span>
+            </div>
           </div>
+
+
         </Form>
 
-        <p className="mt-4 text-center text-sm leading-6 text-[#736b94]">
-          By using this service you accept our <span className="font-semibold text-[#2d7cff]">Terms of Service</span> and{" "}
-          <span className="font-semibold text-[#2d7cff]">Privacy Policy</span>.
+        <p className="hero-download-note">
+          {copy.note}
         </p>
 
-        <div className="mt-5 flex flex-wrap justify-center gap-2 text-sm text-[#7d759d]">
+        <div
+          className={`ai-assist-panel ai-assist-panel-${assistantState.tone}`}
+          aria-live="polite"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="ai-assist-badge">
+              <span className="ai-assist-badge-dot" />
+              {copy.aiAssist.badge}
+            </span>
+            {assistantState.chips.map((chip) => (
+              <span key={chip} className="ai-assist-chip">
+                {chip}
+              </span>
+            ))}
+          </div>
+          <h3 className="mt-4 font-display text-2xl font-bold tracking-[-0.03em] text-[#17142d]">
+            {assistantState.title}
+          </h3>
+          <p className="mt-3 text-sm leading-7 text-[#6d6885]">
+            {assistantState.message}
+          </p>
+        </div>
+
+        <div className="hero-format-rail">
           {formats.map((item) => (
             <span
               key={item}
@@ -160,34 +290,6 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
               {item}
             </span>
           ))}
-        </div>
-
-        {/* <div className="hero-promo-banner mt-6">
-          <div className="hero-promo-mark" aria-hidden="true">
-            <IconGlyph name="download" className="h-8 w-8" />
-          </div>
-          <div>
-            <p className="text-lg font-semibold text-white">Instagram Downloader</p>
-            <p className="text-sm text-white/70">
-              Paste a public post or reel URL and fetch the media instantly.
-            </p>
-          </div>
-          <div className="hero-promo-chip">Preview Ready</div>
-        </div> */}
-
-        <div className="mt-4 flex flex-col gap-3 px-1 text-sm text-[#7d759d] sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-2">
-            <span className="rounded-full border border-white/80 bg-white/75 px-3 py-1.5 font-medium shadow-[0_8px_18px_rgba(104,84,255,0.06)]">
-              No login required
-            </span>
-            <span className="rounded-full border border-white/80 bg-white/75 px-3 py-1.5 font-medium shadow-[0_8px_18px_rgba(104,84,255,0.06)]">
-              Instagram, YouTube, TikTok, Facebook, X, Pinterest
-            </span>
-          </div>
-
-          <button className="font-semibold text-[#6557d8]" type="button">
-            Results appear below
-          </button>
         </div>
 
         {status === 'error' && errorMessage ? (
@@ -200,7 +302,11 @@ export default function HeroDownloadForm({ formats }: HeroDownloadFormProps) {
         ) : null}
       </div>
 
-      {status === 'success' ? <InstagramMediaPreviewGrid media={media} /> : null}
+      {status === 'success' ? (
+        <Suspense fallback={<MediaPreviewGridFallback />}>
+          <InstagramMediaPreviewGrid media={media} />
+        </Suspense>
+      ) : null}
     </div>
   );
 }

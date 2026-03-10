@@ -536,6 +536,7 @@ function extractFromJsonEndpoint(targetUrl: string): Promise<InstagramParseResul
 
     const seen = new Set<string>();
     const media: InstagramMediaItem[] = [];
+console.log(PROXY_AXIOS_CONFIG,'---PROXY_AXIOS_CONFIG');
 
     for (const candidateUrl of new Set(candidates.filter(Boolean))) {
       const response = await axios.get<string>(candidateUrl, {

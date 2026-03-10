@@ -9,6 +9,7 @@ export type IconGlyphName =
   | 'mobile'
   | 'desktop'
   | 'fast'
+  | 'shield'
   | 'sparkles'
   | 'code'
   | 'proxy'
@@ -117,6 +118,13 @@ export default function IconGlyph({
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
           <path d="M13.4 3.8 6.8 12h4l-.3 8.2 6.7-8.2h-4.1l.3-8.2z" fill="currentColor" />
+        </svg>
+      );
+    case 'shield':
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+          <path d="M12 3.8 18.4 6v5.6c0 3.9-2.3 6.8-6.4 8.6-4.1-1.8-6.4-4.7-6.4-8.6V6L12 3.8z" {...strokeProps} />
+          <path d="m9.6 11.9 1.7 1.8 3.2-3.4" {...strokeProps} />
         </svg>
       );
     case 'sparkles':

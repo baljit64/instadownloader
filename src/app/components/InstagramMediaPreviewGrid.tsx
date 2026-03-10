@@ -19,6 +19,21 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
   const getProxyUrl = (url: string) =>
     `/api/instagram-download-proxy?url=${encodeURIComponent(url)}`;
 
+  const getDownloadUrl = (item: MediaItem) => {
+    const provider = item.provider ?? 'instagram';
+
+    return `/api/media-download-proxy?url=${encodeURIComponent(item.url)}&provider=${encodeURIComponent(provider)}&type=${encodeURIComponent(item.type)}`;
+  };
+
+  const triggerBrowserDownload = (url: string, filename: string) => {
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+  };
+
   const getImagePreviewUrl = (item: MediaItem, index: number) => {
     if (item.provider !== 'instagram') {
       return item.url;
@@ -45,40 +60,24 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
 
   const handleDownload = async (item: MediaItem, index: number) => {
     setDownloading((prev) => ({ ...prev, [index]: true }));
-
-    if (item.provider && item.provider !== 'instagram') {
-      const anchor = document.createElement('a');
-      anchor.href = item.url;
-      anchor.target = '_blank';
-      anchor.rel = 'noopener noreferrer';
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      setDownloading((prev) => ({ ...prev, [index]: false }));
-      return;
-    }
+    const provider = item.provider ?? 'instagram';
+    const ext = item.type === 'video' ? 'mp4' : 'jpg';
+    const filename = `${provider}-media-${index + 1}.${ext}`;
+    const downloadUrl = getDownloadUrl(item);
 
     try {
-      const proxyUrl = getProxyUrl(item.url);
-      const response = await fetch(proxyUrl);
+      const response = await fetch(downloadUrl);
 
       if (!response.ok) {
         throw new Error('Download failed');
       }
 
       const blob = await response.blob();
-      const ext = item.type === 'video' ? 'mp4' : 'jpg';
       const blobUrl = URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = blobUrl;
-      anchor.download = `instagram-media-${index + 1}.${ext}`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
+      triggerBrowserDownload(blobUrl, filename);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      const fallbackUrl = getProxyUrl(item.url);
-      window.location.href = fallbackUrl;
+      triggerBrowserDownload(downloadUrl, filename);
     } finally {
       setDownloading((prev) => ({ ...prev, [index]: false }));
     }
@@ -90,7 +89,8 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
         <Card
           key={`${item.type}-${index}`}
           className="hero-media-card overflow-hidden rounded-[28px] border border-white/70 bg-white/80 shadow-[0_20px_48px_rgba(110,91,243,0.12)]"
-          bodyStyle={{ padding: 12 }}
+          styles={{body:{padding: 12}}}
+     
         >
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-[#241c4c]">Media {index + 1}</h3>

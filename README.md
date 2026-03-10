@@ -38,7 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## Webshare Stats
 
 Set `WEBSHARE_API_KEY` in your local or deployed server environment to enable the
-internal proxy usage page at `/proxy-stats`.
+internal proxy usage page at `/{locale}/proxy-stats` such as `/en/proxy-stats`.
 
 Optional:
 
