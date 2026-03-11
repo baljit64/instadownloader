@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { getLocalePath, type Locale, type TranslationDictionary } from '../lib/i18n';
+import { absoluteUrl } from '../lib/site';
+import { seoPageMap, type SeoFaq, type SeoPageConfig } from '../lib/seo-pages';
 import HeroDownloadForm from './HeroDownloadForm';
 import IconGlyph, { type IconGlyphName } from './IconGlyph';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -67,8 +69,16 @@ const benefitVisuals: Array<{
 ];
 
 const spotlightVisuals = [
-  { id: 'photo-download', variant: 'ocean' as const },
-  { id: 'reel-download', variant: 'night' as const },
+  {
+    href: '/instagram-photo-downloader',
+    id: 'photo-download',
+    variant: 'ocean' as const,
+  },
+  {
+    href: '/instagram-reel-downloader',
+    id: 'reel-download',
+    variant: 'night' as const,
+  },
 ];
 
 const aiExperienceIcons: IconGlyphName[] = ['sparkles', 'proxy', 'preview'];
@@ -258,11 +268,13 @@ function MockInstagramCard({
 
 function SpotlightSection({
   copy,
+  href,
   id,
   mockCardCopy,
   variant,
 }: {
   copy: TranslationDictionary['spotlight'][number];
+  href: string;
   id: string;
   mockCardCopy: TranslationDictionary['mockCard'];
   variant: 'night' | 'ocean';
@@ -289,7 +301,7 @@ function SpotlightSection({
           {copy.description}
         </p>
         <Link
-          href="#supported-platforms"
+          href={href}
           className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-[#6c5ce7]"
         >
           {copy.learnMore}
@@ -346,11 +358,90 @@ export default function LandingPage({ dictionary, locale }: LandingPageProps) {
       : 'bg-amber-100 text-amber-700',
   }));
 
-  const footerProductLinks = [
-    { href: getLocalePath(locale), label: dictionary.footer.links.downloader },
-    { href: '#photo-download', label: dictionary.footer.links.photoDownload },
-    { href: '#reel-download', label: dictionary.footer.links.reelDownload },
-  ];
+  const featuredSeoPages: SeoPageConfig[] =
+    locale === 'en'
+      ? [
+          'instagram-downloader',
+          'instagram-post-downloader',
+          'instagram-reel-downloader',
+          'instagram-photo-downloader',
+          'instagram-carousel-downloader',
+          'instagram-download-not-working',
+        ]
+          .map((slug) => seoPageMap[slug])
+          .filter((page): page is SeoPageConfig => Boolean(page))
+      : [];
+
+  const homepageFaqs: SeoFaq[] =
+    locale === 'en'
+      ? [
+          seoPageMap['instagram-downloader']?.faqs[0],
+          seoPageMap['instagram-carousel-downloader']?.faqs[0],
+          seoPageMap['instagram-reel-downloader']?.faqs[0],
+          seoPageMap['public-vs-private-instagram-links']?.faqs[0],
+        ].filter((faq): faq is SeoFaq => Boolean(faq))
+      : [];
+
+  const howToPage = seoPageMap['how-to-download-instagram-post'];
+  const homeStructuredData =
+    locale === 'en' && howToPage
+      ? {
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'CollectionPage',
+              name: 'Instagram Downloader',
+              description: dictionary.metadata.homeDescription,
+              url: absoluteUrl('/en'),
+            },
+            {
+              '@type': 'HowTo',
+              name: howToPage.heroTitle,
+              description: howToPage.heroDescription,
+              step: howToPage.steps.map((step, index) => ({
+                '@type': 'HowToStep',
+                position: index + 1,
+                name: step.title,
+                text: step.description,
+              })),
+            },
+            {
+              '@type': 'FAQPage',
+              mainEntity: homepageFaqs.map((faq) => ({
+                '@type': 'Question',
+                name: faq.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: faq.answer,
+                },
+              })),
+            },
+            {
+              '@type': 'ItemList',
+              name: 'Instagram download resources',
+              itemListElement: featuredSeoPages.map((page, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                name: page.shortTitle,
+                url: absoluteUrl(`/${page.slug}`),
+              })),
+            },
+          ],
+        }
+      : null;
+
+  const footerProductLinks =
+    locale === 'en'
+      ? [
+          { href: '/instagram-downloader', label: 'Instagram Downloader' },
+          { href: '/instagram-photo-downloader', label: 'Instagram Photo Downloader' },
+          { href: '/instagram-reel-downloader', label: 'Instagram Reel Downloader' },
+        ]
+      : [
+          { href: getLocalePath(locale), label: dictionary.footer.links.downloader },
+          { href: '#photo-download', label: dictionary.footer.links.photoDownload },
+          { href: '#reel-download', label: dictionary.footer.links.reelDownload },
+        ];
 
   const footerCompanyLinks = [
     { href: '#about', label: dictionary.footer.links.about },
@@ -358,11 +449,27 @@ export default function LandingPage({ dictionary, locale }: LandingPageProps) {
     { href: '#supported-platforms', label: dictionary.footer.links.supportedPlatforms },
   ];
 
-  const footerSupportLinks = [
-    { href: '#supported-platforms', label: dictionary.footer.links.betaPlatforms },
-    { href: '#details', label: dictionary.footer.links.supportedPlatforms },
-    { href: '#contact', label: dictionary.footer.links.contact },
-  ];
+  const footerSupportLinks =
+    locale === 'en'
+      ? [
+          {
+            href: '/how-to-download-instagram-post',
+            label: 'How to Download an Instagram Post',
+          },
+          {
+            href: '/instagram-download-not-working',
+            label: 'Instagram Download Not Working',
+          },
+          {
+            href: '/public-vs-private-instagram-links',
+            label: 'Public vs Private Instagram Links',
+          },
+        ]
+      : [
+          { href: '#supported-platforms', label: dictionary.footer.links.betaPlatforms },
+          { href: '#details', label: dictionary.footer.links.supportedPlatforms },
+          { href: '#contact', label: dictionary.footer.links.contact },
+        ];
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -403,6 +510,13 @@ export default function LandingPage({ dictionary, locale }: LandingPageProps) {
       </header>
 
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+        {homeStructuredData ? (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(homeStructuredData) }}
+          />
+        ) : null}
+
         <section className="relative overflow-hidden px-4 pb-4 pt-10 text-center sm:px-10">
           {heroDecorations.map((item) => (
             <div
@@ -551,6 +665,70 @@ export default function LandingPage({ dictionary, locale }: LandingPageProps) {
             ))}
           </div>
         </section>
+
+        {featuredSeoPages.length ? (
+          <section className="surface-card mt-10 rounded-[38px] px-6 py-10 sm:px-8">
+            <div className="max-w-3xl">
+              <span className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
+                Search intent coverage
+              </span>
+              <h2 className="font-display mt-4 text-4xl font-bold tracking-[-0.04em] text-[#171923] sm:text-[3.1rem]">
+                Explore focused Instagram download pages
+              </h2>
+              <p className="mt-5 text-base leading-8 text-[#726a92]">
+                These pages target the main Instagram download queries users search for,
+                including posts, reels, photos, carousel media, and troubleshooting.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {featuredSeoPages.map((page) => (
+                <Link
+                  key={page.slug}
+                  href={`/${page.slug}`}
+                  className="rounded-[28px] border border-white/80 bg-white/82 px-5 py-6 shadow-[0_18px_40px_rgba(118,99,255,0.08)] transition hover:-translate-y-0.5 hover:border-[#cfc5ff]"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7b74a3]">
+                    {page.type === 'guide' ? 'Guide' : 'Tool page'}
+                  </p>
+                  <h3 className="font-display mt-4 text-[1.5rem] font-bold tracking-[-0.03em] text-[#171923]">
+                    {page.shortTitle}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-[#6d6885]">
+                    {page.metadataDescription}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {homepageFaqs.length ? (
+          <section className="surface-card mt-10 rounded-[38px] px-6 py-10 sm:px-8">
+            <div className="max-w-3xl">
+              <span className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
+                Frequently asked
+              </span>
+              <h2 className="font-display mt-4 text-4xl font-bold tracking-[-0.04em] text-[#171923] sm:text-[3.1rem]">
+                Common Instagram downloader questions
+              </h2>
+            </div>
+
+            <div className="mt-8 space-y-4">
+              {homepageFaqs.map((faq) => (
+                <details
+                  key={faq.question}
+                  className="rounded-[24px] border border-white/80 bg-white/82 px-5 py-5 shadow-[0_18px_40px_rgba(118,99,255,0.08)]"
+                >
+                  <summary className="cursor-pointer list-none text-lg font-semibold text-[#171923]">
+                    {faq.question}
+                  </summary>
+                  <p className="mt-4 text-sm leading-7 text-[#6d6885]">{faq.answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section
           id="contact"

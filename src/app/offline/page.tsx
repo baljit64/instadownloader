@@ -1,5 +1,14 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { defaultLocale } from '../lib/i18n';
+
+export const metadata: Metadata = {
+  title: 'Offline',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function OfflinePage() {
   return (

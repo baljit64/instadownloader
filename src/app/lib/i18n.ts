@@ -104,8 +104,8 @@ export function detectPreferredLocale(acceptLanguage: string | null): Locale {
 const englishDictionary = {
   metadata: {
     homeDescription:
-      'Free online media downloader for public Instagram, YouTube, TikTok, Facebook, X, and Pinterest links. Paste a supported media URL and download videos or images instantly.',
-    homeTitle: 'Instagram Downloader',
+      'Download public Instagram reels, posts, photos, and carousel media online. Paste a public link to preview and save the file. Also supports public URLs from YouTube, TikTok, Facebook, X, and Pinterest.',
+    homeTitle: 'Instagram Downloader for Public Posts, Reels and Photos',
     proxyStatsDescription: 'Daily Webshare proxy usage for the downloader backend.',
     proxyStatsTitle: 'Proxy Stats',
   },
