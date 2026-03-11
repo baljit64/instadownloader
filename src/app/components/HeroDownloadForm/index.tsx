@@ -3,17 +3,15 @@
 import { lazy, Suspense, useDeferredValue, useState } from 'react';
 import { Alert, Button, Form, Input } from 'antd';
 import {
-  detectSupportedPlatform,
   isSupportedMediaUrl,
   normalizeSupportedMediaUrl,
-  supportedPlatformLabels,
   type MediaItem,
-  type SupportedPlatform,
-} from '../lib/media';
-import type { TranslationDictionary } from '../lib/i18n';
-import IconGlyph from './IconGlyph';
+} from '../../lib/media';
+import type { TranslationDictionary } from '../../lib/i18n';
+import IconGlyph from '../IconGlyph';
+import { getAssistantState } from './assistant-state';
 
-const InstagramMediaPreviewGrid = lazy(() => import('./InstagramMediaPreviewGrid'));
+const InstagramMediaPreviewGrid = lazy(() => import('../InstagramMediaPreviewGrid'));
 
 type DownloaderStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -32,84 +30,6 @@ interface ApiSuccessResponse {
 
 interface ApiErrorResponse {
   error?: string;
-}
-
-const providerTextHints: Array<[SupportedPlatform, string[]]> = [
-  ['instagram', ['instagram.com', 'instagr.am']],
-  ['youtube', ['youtube.com', 'youtu.be']],
-  ['tiktok', ['tiktok.com']],
-  ['facebook', ['facebook.com', 'fb.watch']],
-  ['x', ['x.com', 'twitter.com']],
-  ['pinterest', ['pinterest.com', 'pin.it']],
-];
-
-function detectTypedPlatformHint(value: string): SupportedPlatform | null {
-  const directDetection = detectSupportedPlatform(value);
-  if (directDetection) {
-    return directDetection;
-  }
-
-  const normalized = value.trim().toLowerCase();
-  if (!normalized) {
-    return null;
-  }
-
-  for (const [platform, hints] of providerTextHints) {
-    if (hints.some((hint) => normalized.includes(hint))) {
-      return platform;
-    }
-  }
-
-  return null;
-}
-
-function getAssistantState(copy: TranslationDictionary['hero'], value: string) {
-  const trimmed = value.trim();
-  const provider = detectTypedPlatformHint(trimmed);
-  const looksLikeUrl = /^https?:\/\//i.test(trimmed);
-
-  if (!trimmed) {
-    return {
-      chips: copy.aiAssist.standbyChips,
-      message: copy.aiAssist.standbyMessage,
-      title: copy.aiAssist.standbyTitle,
-      tone: 'neutral' as const,
-    };
-  }
-
-  if (provider) {
-    return {
-      chips: [
-        supportedPlatformLabels[provider],
-        provider === 'instagram'
-          ? copy.aiAssist.nativeExtractor
-          : copy.aiAssist.universalExtractor,
-        copy.aiAssist.previewFlow,
-      ],
-      message:
-        provider === 'instagram'
-          ? copy.aiAssist.nativeMessage
-          : copy.aiAssist.universalMessage,
-      title: `${supportedPlatformLabels[provider]} ${copy.aiAssist.recognizedSuffix}`,
-      tone: 'ready' as const,
-    };
-  }
-
-  if (looksLikeUrl) {
-    return {
-      chips: copy.aiAssist.unsupportedChips,
-      message: copy.aiAssist.unsupportedMessage,
-      title: copy.aiAssist.unsupportedTitle,
-      tone: 'warning' as const,
-    };
-  }
-
-  return {
-    chips: copy.aiAssist.inputChips,
-    message: copy.aiAssist.inputMessage,
-    title: copy.aiAssist.inputTitle,
-    tone: 'neutral' as const,
-  };
 }
 
 function MediaPreviewGridFallback() {
@@ -258,7 +178,24 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
           {copy.note}
         </p>
 
-        <div
+                <div className="hero-format-rail">
+          {formats.map((item) => (
+            <span
+              key={item}
+              className="hero-format-pill"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+
+        {status === 'success' ? (
+          <Suspense fallback={<MediaPreviewGridFallback />}>
+            <InstagramMediaPreviewGrid media={media} />
+          </Suspense>
+        ) : null}
+
+        {/* <div
           className={`ai-assist-panel ai-assist-panel-${assistantState.tone}`}
           aria-live="polite"
         >
@@ -279,18 +216,9 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
           <p className="mt-3 text-sm leading-7 text-[#6d6885]">
             {assistantState.message}
           </p>
-        </div>
+        </div> */}
 
-        <div className="hero-format-rail">
-          {formats.map((item) => (
-            <span
-              key={item}
-              className="hero-format-pill"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
+
 
         {status === 'error' && errorMessage ? (
           <Alert
@@ -301,12 +229,6 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
           />
         ) : null}
       </div>
-
-      {status === 'success' ? (
-        <Suspense fallback={<MediaPreviewGridFallback />}>
-          <InstagramMediaPreviewGrid media={media} />
-        </Suspense>
-      ) : null}
     </div>
   );
 }
