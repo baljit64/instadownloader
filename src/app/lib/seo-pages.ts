@@ -1,5 +1,10 @@
 import type { Metadata } from 'next';
-import { absoluteUrl, siteName } from './site';
+import {
+  absoluteUrl,
+  getOpenGraphImages,
+  getTwitterImages,
+  siteName,
+} from './site';
 
 export interface SeoFaq {
   answer: string;
@@ -575,11 +580,13 @@ export function buildSeoPageMetadata(page: SeoPageConfig): Metadata {
       title: page.metadataTitle,
       description: page.metadataDescription,
       url: absoluteUrl(`/${page.slug}`),
+      images: getOpenGraphImages(),
     },
     twitter: {
       card: 'summary_large_image',
       title: page.metadataTitle,
       description: page.metadataDescription,
+      images: getTwitterImages(),
     },
   };
 }

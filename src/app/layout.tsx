@@ -1,9 +1,11 @@
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { headers } from 'next/headers';
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
 import PwaClient from './components/PwaClient';
 import './globals.css';
+import { defaultLocale, isSupportedLocale, localeInfo } from './lib/i18n';
 import {
   absoluteUrl,
   getSiteUrl,
@@ -34,9 +36,6 @@ export const metadata: Metadata = {
   description: siteDescription,
   applicationName: siteName,
   keywords: siteKeywords,
-  alternates: {
-    canonical: '/',
-  },
   category: 'technology',
   referrer: 'origin-when-cross-origin',
   formatDetection: {
@@ -103,11 +102,25 @@ export const viewport: Viewport = {
   colorScheme: 'light',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params?: Promise<{
+    locale?: string;
+  }>;
 }>) {
+  const requestHeaders = await headers();
+  const resolvedParams = params ? await params : undefined;
+  const localeCandidate = requestHeaders.get('x-site-locale') ?? resolvedParams?.locale;
+  const locale =
+    localeCandidate && isSupportedLocale(localeCandidate)
+      ? localeCandidate
+      : defaultLocale;
+  const requestDir = requestHeaders.get('x-site-dir');
+  const dir = requestDir === 'rtl' || requestDir === 'ltr' ? requestDir : localeInfo[locale].dir;
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -135,7 +148,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang={locale} dir={dir}>
       <body className={`${bodyFont.variable} ${displayFont.variable} antialiased`}>
         <script
           type="application/ld+json"

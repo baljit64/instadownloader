@@ -131,29 +131,17 @@ export function getLandingPageContent(
         ].filter((faq): faq is SeoFaq => Boolean(faq))
       : [];
 
-  const howToPage = seoPageMap['how-to-download-instagram-post'];
   const homeStructuredData =
-    locale === 'en' && howToPage
+    locale === 'en'
       ? {
           '@context': 'https://schema.org',
           '@graph': [
             {
               '@type': 'CollectionPage',
               name: 'Instagram Downloader',
-              description: dictionary.metadata.homeDescription,
-              url: absoluteUrl('/en'),
-            },
-            {
-              '@type': 'HowTo',
-              name: howToPage.heroTitle,
-              description: howToPage.heroDescription,
-              step: howToPage.steps.map((step, index) => ({
-                '@type': 'HowToStep',
-                position: index + 1,
-                name: step.title,
-                text: step.description,
-              })),
-            },
+                description: dictionary.metadata.homeDescription,
+                url: absoluteUrl('/en'),
+              },
             {
               '@type': 'FAQPage',
               mainEntity: homepageFaqs.map((faq) => ({

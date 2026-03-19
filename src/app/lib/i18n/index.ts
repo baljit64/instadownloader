@@ -74,10 +74,16 @@ export function localizePathname(pathname: string, locale: Locale): string {
   return `/${segments.join('/')}`;
 }
 
-export function buildLocaleAlternates(pathname = ''): Record<Locale, string> {
-  return Object.fromEntries(
-    locales.map((locale) => [locale, absoluteUrl(getLocalePath(locale, pathname))])
-  ) as Record<Locale, string>;
+export function buildLocaleAlternates(pathname = ''): Record<string, string> {
+  const localizedEntries = locales.map((locale) => [
+    locale,
+    absoluteUrl(getLocalePath(locale, pathname)),
+  ]);
+
+  return Object.fromEntries([
+    ...localizedEntries,
+    ['x-default', absoluteUrl(getLocalePath(defaultLocale, pathname))],
+  ]);
 }
 
 export function detectPreferredLocale(acceptLanguage: string | null): Locale {

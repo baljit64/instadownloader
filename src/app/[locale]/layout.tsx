@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
-import LocaleHtmlController from '../components/LocaleHtmlController';
-import { isSupportedLocale, localeInfo, locales } from '../lib/i18n';
+import { isSupportedLocale, locales } from '../lib/i18n';
 
 export const dynamicParams = false;
 
@@ -28,7 +27,6 @@ export default async function LocaleLayout({
 
   return (
     <>
-      <LocaleHtmlController dir={localeInfo[locale].dir} lang={locale} />
       {children}
     </>
   );

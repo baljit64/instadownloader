@@ -41,3 +41,25 @@ export function getSiteUrl(): string {
 export function absoluteUrl(path = '/'): string {
   return new URL(path, `${getSiteUrl()}/`).toString();
 }
+
+export function getOpenGraphImages() {
+  return [
+    {
+      url: absoluteUrl('/opengraph-image'),
+      width: 1200,
+      height: 630,
+      alt: siteName,
+    },
+  ];
+}
+
+export function getTwitterImages() {
+  return [
+    {
+      url: absoluteUrl('/twitter-image'),
+      width: 1200,
+      height: 630,
+      alt: siteName,
+    },
+  ];
+}

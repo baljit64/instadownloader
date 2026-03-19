@@ -8,7 +8,13 @@ import {
   isSupportedLocale,
   localeInfo,
 } from '../lib/i18n';
-import { absoluteUrl, siteKeywords, siteName } from '../lib/site';
+import {
+  absoluteUrl,
+  getOpenGraphImages,
+  getTwitterImages,
+  siteKeywords,
+  siteName,
+} from '../lib/site';
 
 interface LocalizedHomePageProps {
   params: Promise<{
@@ -43,11 +49,13 @@ export async function generateMetadata({
       description: dictionary.metadata.homeDescription,
       url: absoluteUrl(canonicalPath),
       locale: localeInfo[locale].ogLocale,
+      images: getOpenGraphImages(),
     },
     twitter: {
       card: 'summary_large_image',
       title: dictionary.metadata.homeTitle,
       description: dictionary.metadata.homeDescription,
+      images: getTwitterImages(),
     },
   };
 }

@@ -3,9 +3,10 @@ import { getSiteUrl } from './lib/site';
 
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
+  const host = new URL(siteUrl).host;
 
   return {
-    host: siteUrl,
+    host,
     sitemap: `${siteUrl}/sitemap.xml`,
     rules: [
       {
