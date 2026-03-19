@@ -64,7 +64,14 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
   const isLoading = status === 'loading';
 
   async function handleFinish(values: FormValues) {
-    const normalizedUrl = normalizeSupportedMediaUrl(values.url);
+    let normalizedUrl = '';
+    try {
+      normalizedUrl = normalizeSupportedMediaUrl(values.url);
+    } catch {
+      setStatus('error');
+      setErrorMessage(copy.validations.unsupported);
+      return;
+    }
 
     form.setFieldsValue({ url: normalizedUrl });
     setStatus('loading');

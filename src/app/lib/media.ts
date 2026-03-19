@@ -41,6 +41,12 @@ const SUPPORTED_HOSTS: Array<[SupportedPlatform, RegExp]> = [
 export function detectSupportedPlatform(value: string): SupportedPlatform | null {
   try {
     const parsed = new URL(value.trim());
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return null;
+    }
+    if (parsed.username || parsed.password) {
+      return null;
+    }
     const hostname = parsed.hostname.toLowerCase();
 
     for (const [platform, pattern] of SUPPORTED_HOSTS) {
@@ -61,7 +67,16 @@ export function isSupportedMediaUrl(value: string): boolean {
 
 export function normalizeSupportedMediaUrl(value: string): string {
   const parsed = new URL(value.trim());
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    throw new Error('Unsupported URL protocol.');
+  }
+  if (parsed.username || parsed.password) {
+    throw new Error('Unsupported URL credentials.');
+  }
   const platform = detectSupportedPlatform(parsed.toString());
+  if (!platform) {
+    throw new Error('Unsupported URL.');
+  }
 
   parsed.hash = '';
 

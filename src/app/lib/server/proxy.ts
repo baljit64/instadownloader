@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import type { AxiosRequestConfig } from 'axios';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
@@ -5,9 +6,12 @@ export type ProxyAxiosConfig = Pick<AxiosRequestConfig, 'httpAgent' | 'httpsAgen
 
 const PROXY_POOL_ENV = 'WEB_SHARE_PROXY_POOL';
 const ROTATE_EVERY_ENV = 'WEB_SHARE_PROXY_ROTATE_EVERY';
+const PROXY_COOLDOWN_ENV = 'WEB_SHARE_PROXY_COOLDOWN_MS';
+const PROXY_FAILURE_THRESHOLD_ENV = 'WEB_SHARE_PROXY_FAILURE_THRESHOLD';
 
 let proxyPoolCache: string[] | null = null;
 let rotationCursor = 0;
+const proxyHealth = new Map<string, { failures: number; unhealthyUntil: number }>();
 
 function getEnvValue(name: string): string | null {
   const value = process.env[name]?.trim();
@@ -22,6 +26,42 @@ function getRotationStep(): number {
 
   const parsed = Number.parseInt(raw, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 1;
+}
+
+function getProxyCooldownMs(): number {
+  const raw = getEnvValue(PROXY_COOLDOWN_ENV);
+  if (!raw) {
+    return 60_000;
+  }
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 60_000;
+}
+
+function getProxyFailureThreshold(): number {
+  const raw = getEnvValue(PROXY_FAILURE_THRESHOLD_ENV);
+  if (!raw) {
+    return 2;
+  }
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 2;
+}
+
+function hashProxyUrl(proxyUrl: string): string {
+  return createHash('sha256').update(proxyUrl).digest('hex').slice(0, 8);
+}
+
+function isProxyHealthy(proxyUrl: string): boolean {
+  const health = proxyHealth.get(proxyUrl);
+  if (!health) {
+    return true;
+  }
+
+  if (health.unhealthyUntil > Date.now()) {
+    return false;
+  }
+
+  proxyHealth.delete(proxyUrl);
+  return true;
 }
 
 function normalizeProxyUrl(
@@ -108,13 +148,62 @@ function getSingleProxyUrl(): string | null {
 function selectProxyUrl(): string | null {
   const pool = getProxyPool();
   if (pool.length) {
+    const healthyPool = pool.filter((proxyUrl) => isProxyHealthy(proxyUrl));
+    const candidates = healthyPool.length ? healthyPool : pool;
     const rotationStep = getRotationStep();
-    const index = Math.floor(rotationCursor / rotationStep) % pool.length;
+    const index = Math.floor(rotationCursor / rotationStep) % candidates.length;
     rotationCursor += 1;
-    return pool[index];
+    return candidates[index];
   }
 
   return getSingleProxyUrl();
+}
+
+export interface ProxySelection {
+  proxyUrl: string | null;
+  proxyId: string | null;
+  config: ProxyAxiosConfig;
+}
+
+export function selectProxy(): ProxySelection {
+  const proxyUrl = selectProxyUrl();
+  if (!proxyUrl) {
+    return {
+      proxyUrl: null,
+      proxyId: null,
+      config: {},
+    };
+  }
+
+  const proxyAgent = new HttpsProxyAgent(proxyUrl);
+
+  return {
+    proxyUrl,
+    proxyId: hashProxyUrl(proxyUrl),
+    config: {
+      httpAgent: proxyAgent,
+      httpsAgent: proxyAgent,
+      proxy: false,
+    },
+  };
+}
+
+export function reportProxyFailure(proxyUrl: string) {
+  const threshold = getProxyFailureThreshold();
+  const cooldownMs = getProxyCooldownMs();
+  const health = proxyHealth.get(proxyUrl) ?? { failures: 0, unhealthyUntil: 0 };
+  health.failures += 1;
+
+  if (health.failures >= threshold) {
+    health.failures = 0;
+    health.unhealthyUntil = Date.now() + cooldownMs;
+  }
+
+  proxyHealth.set(proxyUrl, health);
+}
+
+export function reportProxySuccess(proxyUrl: string) {
+  proxyHealth.delete(proxyUrl);
 }
 
 export function getProxyAgent() {

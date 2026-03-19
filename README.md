@@ -50,6 +50,26 @@ Optional:
   `WEB_SHARE_PROXY_PASSWORD` when missing).
 - `WEB_SHARE_PROXY_ROTATE_EVERY` controls how many inbound requests share one proxy
   before rotating (default: 1).
+- `WEB_SHARE_PROXY_COOLDOWN_MS` temporarily removes a proxy from rotation after
+  repeated failures (default: 60000).
+- `WEB_SHARE_PROXY_FAILURE_THRESHOLD` sets how many consecutive failures trigger
+  a cooldown (default: 2).
 - `WEB_SHARE_PROXY_HOST`, `WEB_SHARE_PROXY_PORT`, `WEB_SHARE_PROXY_USERNAME`, and
   `WEB_SHARE_PROXY_PASSWORD` keep the Instagram downloader routed through Webshare
   when no pool is configured.
+
+## Rate Limiting & Cache
+
+- `RATE_LIMIT_ENABLED` toggles in-memory rate limiting (default: true).
+- `RATE_LIMIT_MAX` sets the max requests per IP per window (default: 120).
+- `RATE_LIMIT_WINDOW_MS` sets the rate limit window in milliseconds (default: 60000).
+- `RATE_LIMIT_MAX_KEYS` caps the in-memory limiter key count (default: 10000).
+- `INSTAGRAM_CACHE_TTL_SECONDS` sets the Instagram extraction cache TTL (default: 600).
+- `INSTAGRAM_CACHE_MAX_ENTRIES` limits Instagram cache entries (default: 500).
+- `MEDIA_CACHE_TTL_SECONDS` sets the non-Instagram extraction cache TTL (default: 300).
+- `MEDIA_CACHE_MAX_ENTRIES` limits non-Instagram cache entries (default: 500).
+
+## Proxy Stats Access
+
+- `PROXY_STATS_ACCESS_TOKEN` restricts access to `/{locale}/proxy-stats`. Supply the
+  token via `?token=...`, `x-proxy-stats-token`, or `proxy_stats_token` cookie.

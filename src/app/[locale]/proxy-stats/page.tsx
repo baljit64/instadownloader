@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cookies, headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import ProxyStatsPageView from '../../components/ProxyStatsPageView';
 import {
@@ -19,6 +20,7 @@ interface LocalizedProxyStatsPageProps {
   searchParams: Promise<{
     date?: string | string[];
     tzOffsetMinutes?: string | string[];
+    token?: string | string[];
   }>;
 }
 
@@ -65,9 +67,22 @@ export default async function LocalizedProxyStatsPage({
   searchParams,
 }: LocalizedProxyStatsPageProps) {
   const { locale } = await params;
+  const resolvedSearchParams = await searchParams;
+  const accessToken = process.env.PROXY_STATS_ACCESS_TOKEN?.trim();
 
   if (!isSupportedLocale(locale)) {
     notFound();
+  }
+
+  if (accessToken) {
+    const tokenValue = resolvedSearchParams.token;
+    const queryToken = Array.isArray(tokenValue) ? tokenValue[0] : tokenValue;
+    const headerToken = headers().get('x-proxy-stats-token');
+    const cookieToken = cookies().get('proxy_stats_token')?.value;
+
+    if (![queryToken, headerToken, cookieToken].includes(accessToken)) {
+      notFound();
+    }
   }
 
   const dictionary = getDictionary(locale);
@@ -77,7 +92,7 @@ export default async function LocalizedProxyStatsPage({
       copy={dictionary.proxyStats}
       currentLocale={locale}
       languageMenuLabel={dictionary.header.languageMenu}
-      searchParams={searchParams}
+      searchParams={Promise.resolve(resolvedSearchParams)}
     />
   );
 }
