@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 
+type ProxyAxiosConfig = ReturnType<typeof getProxyAxiosConfig>;
+
 interface InstagramDownloadRequest {
   url?: string;
 }
@@ -17,7 +19,6 @@ interface InstagramParseResult {
 }
 
 const REQUEST_TIMEOUT_MS = 18000;
-const PROXY_AXIOS_CONFIG = getProxyAxiosConfig();
 
 const REQUEST_HEADERS = {
   'User-Agent':
@@ -515,7 +516,10 @@ function extractMediaFromHtml(html: string): InstagramMediaItem[] {
   return media;
 }
 
-function extractFromJsonEndpoint(targetUrl: string): Promise<InstagramParseResult> {
+function extractFromJsonEndpoint(
+  targetUrl: string,
+  proxyConfig: ProxyAxiosConfig
+): Promise<InstagramParseResult> {
   return (async () => {
     const shortcode =
       targetUrl.match(/\/((?:p|reel|reels|tv))\/([A-Za-z0-9_-]+)\/?$/)?.[2] ?? '';
@@ -536,11 +540,10 @@ function extractFromJsonEndpoint(targetUrl: string): Promise<InstagramParseResul
 
     const seen = new Set<string>();
     const media: InstagramMediaItem[] = [];
-console.log(PROXY_AXIOS_CONFIG,'---PROXY_AXIOS_CONFIG');
 
     for (const candidateUrl of new Set(candidates.filter(Boolean))) {
       const response = await axios.get<string>(candidateUrl, {
-        ...PROXY_AXIOS_CONFIG,
+        ...proxyConfig,
         headers: {
           ...REQUEST_HEADERS,
           Accept: 'application/json,text/plain,*/*',
@@ -606,7 +609,11 @@ console.log(PROXY_AXIOS_CONFIG,'---PROXY_AXIOS_CONFIG');
   })();
 }
 
-function extractFromDirectEndpoint(shortcode: string, postType: 'p' | 'reel' | 'tv' | 'unknown'): Promise<InstagramMediaItem[]> {
+function extractFromDirectEndpoint(
+  shortcode: string,
+  postType: 'p' | 'reel' | 'tv' | 'unknown',
+  proxyConfig: ProxyAxiosConfig
+): Promise<InstagramMediaItem[]> {
   return (async () => {
     const seen = new Set<string>();
     const media: InstagramMediaItem[] = [];
@@ -619,7 +626,7 @@ function extractFromDirectEndpoint(shortcode: string, postType: 'p' | 'reel' | '
     const directUrl = `https://www.instagram.com/${basePath}/${shortcode}/media/?size=l`;
 
     const response = await axios.get<string>(directUrl, {
-      ...PROXY_AXIOS_CONFIG,
+      ...proxyConfig,
       headers: {
         ...REQUEST_HEADERS,
         Referer: 'https://www.instagram.com/',
@@ -659,7 +666,10 @@ function extractFromDirectEndpoint(shortcode: string, postType: 'p' | 'reel' | '
   })();
 }
 
-function extractFromEmbedPage(targetUrl: string): Promise<InstagramParseResult> {
+function extractFromEmbedPage(
+  targetUrl: string,
+  proxyConfig: ProxyAxiosConfig
+): Promise<InstagramParseResult> {
   return (async () => {
     const media: InstagramMediaItem[] = [];
     const seen = new Set<string>();
@@ -672,7 +682,7 @@ function extractFromEmbedPage(targetUrl: string): Promise<InstagramParseResult> 
     const embedUrl = `https://www.instagram.com${cleanPath}/embed/captioned/`;
 
     const response = await axios.get<string>(embedUrl, {
-      ...PROXY_AXIOS_CONFIG,
+      ...proxyConfig,
       headers: {
         ...EMBED_REQUEST_HEADERS,
         Referer: 'https://www.instagram.com/',
@@ -738,7 +748,10 @@ function extractFromEmbedPage(targetUrl: string): Promise<InstagramParseResult> 
   })();
 }
 
-async function extractFromGraphQL(shortcode: string): Promise<InstagramParseResult> {
+async function extractFromGraphQL(
+  shortcode: string,
+  proxyConfig: ProxyAxiosConfig
+): Promise<InstagramParseResult> {
   if (!shortcode) {
     return { media: [], statusHint: 'ok' };
   }
@@ -766,7 +779,7 @@ async function extractFromGraphQL(shortcode: string): Promise<InstagramParseResu
           doc_id: docId,
         }).toString(),
         {
-          ...PROXY_AXIOS_CONFIG,
+          ...proxyConfig,
           headers: {
             'User-Agent': REQUEST_HEADERS['User-Agent'],
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -831,7 +844,10 @@ async function extractFromGraphQL(shortcode: string): Promise<InstagramParseResu
   return { media, statusHint: 'ok' };
 }
 
-async function extractFromOEmbed(targetUrl: string): Promise<InstagramParseResult> {
+async function extractFromOEmbed(
+  targetUrl: string,
+  proxyConfig: ProxyAxiosConfig
+): Promise<InstagramParseResult> {
   const media: InstagramMediaItem[] = [];
   const seen = new Set<string>();
 
@@ -839,7 +855,7 @@ async function extractFromOEmbed(targetUrl: string): Promise<InstagramParseResul
     const response = await axios.get(
       `https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(targetUrl)}`,
       {
-        ...PROXY_AXIOS_CONFIG,
+        ...proxyConfig,
         headers: REQUEST_HEADERS,
         timeout: REQUEST_TIMEOUT_MS,
         validateStatus: () => true,
@@ -930,9 +946,12 @@ function extractShortcode(incomingUrl: string): string | null {
   return null;
 }
 
-async function fetchInstagramHtml(targetUrl: string): Promise<AxiosResponse<string>> {
+async function fetchInstagramHtml(
+  targetUrl: string,
+  proxyConfig: ProxyAxiosConfig
+): Promise<AxiosResponse<string>> {
   return axios.get<string>(targetUrl, {
-    ...PROXY_AXIOS_CONFIG,
+    ...proxyConfig,
     headers: {
       ...REQUEST_HEADERS,
       Referer: 'https://www.instagram.com/',
@@ -960,9 +979,10 @@ export async function POST(request: NextRequest) {
   const targetUrl = normalizeInstagramPostUrl(incomingUrl);
   const postType = getPostType(incomingUrl);
   const shortcode = extractShortcode(incomingUrl);
+  const proxyConfig = getProxyAxiosConfig();
 
   try {
-    const htmlResponse = await fetchInstagramHtml(targetUrl);
+    const htmlResponse = await fetchInstagramHtml(targetUrl, proxyConfig);
     const html = String(htmlResponse.data ?? '');
     const initialLoadReturned404 = htmlResponse.status === 404;
 
@@ -977,7 +997,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (shortcode) {
-      const graphqlResult = await extractFromGraphQL(shortcode);
+      const graphqlResult = await extractFromGraphQL(shortcode, proxyConfig);
 
       if (graphqlResult.statusHint === 'private') {
         return errorResponse('Private Instagram post.', 403);
@@ -988,7 +1008,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const jsonEndpointResult = await extractFromJsonEndpoint(targetUrl);
+    const jsonEndpointResult = await extractFromJsonEndpoint(targetUrl, proxyConfig);
 
     if (jsonEndpointResult.statusHint === 'private') {
       return errorResponse('Private Instagram post.', 403);
@@ -998,7 +1018,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ media: prioritizeMedia(jsonEndpointResult.media) });
     }
 
-    const embedResult = await extractFromEmbedPage(targetUrl);
+    const embedResult = await extractFromEmbedPage(targetUrl, proxyConfig);
 
     if (embedResult.statusHint === 'private') {
       return errorResponse('Private Instagram post.', 403);
@@ -1009,13 +1029,13 @@ export async function POST(request: NextRequest) {
     }
 
     if (shortcode) {
-      const directMedia = await extractFromDirectEndpoint(shortcode, postType);
+      const directMedia = await extractFromDirectEndpoint(shortcode, postType, proxyConfig);
       if (directMedia.length) {
         return NextResponse.json({ media: prioritizeMedia(directMedia) });
       }
     }
 
-    const oembedResult = await extractFromOEmbed(targetUrl);
+    const oembedResult = await extractFromOEmbed(targetUrl, proxyConfig);
     if (oembedResult.media.length) {
       return NextResponse.json({ media: prioritizeMedia(oembedResult.media) });
     }

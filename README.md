@@ -44,6 +44,12 @@ Optional:
 
 - `WEBSHARE_PLAN_ID` limits the query to one Webshare plan when your account has more
   than one.
+- `WEB_SHARE_PROXY_POOL` supplies a comma- or newline-separated proxy pool for
+  rotation. Entries can be `host`, `host:port`, `user:pass@host:port`, or a full
+  URL (the app will add `WEB_SHARE_PROXY_PORT` or `WEB_SHARE_PROXY_USERNAME` and
+  `WEB_SHARE_PROXY_PASSWORD` when missing).
+- `WEB_SHARE_PROXY_ROTATE_EVERY` controls how many inbound requests share one proxy
+  before rotating (default: 1).
 - `WEB_SHARE_PROXY_HOST`, `WEB_SHARE_PROXY_PORT`, `WEB_SHARE_PROXY_USERNAME`, and
-  `WEB_SHARE_PROXY_PASSWORD` keep the Instagram downloader itself routed through
-  Webshare.
+  `WEB_SHARE_PROXY_PASSWORD` keep the Instagram downloader routed through Webshare
+  when no pool is configured.

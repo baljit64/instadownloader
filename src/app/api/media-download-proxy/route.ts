@@ -6,7 +6,6 @@ import { NextRequest, NextResponse } from 'next/server';
 export const runtime = 'nodejs';
 
 const REQUEST_TIMEOUT_MS = 30_000;
-const INSTAGRAM_PROXY_AXIOS_CONFIG = getProxyAxiosConfig();
 const REQUEST_HEADERS = {
   'User-Agent':
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -113,8 +112,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const proxyConfig = providerParam === 'instagram' ? getProxyAxiosConfig() : {};
     const upstream = await axios.get(mediaUrl, {
-      ...(providerParam === 'instagram' ? INSTAGRAM_PROXY_AXIOS_CONFIG : {}),
+      ...proxyConfig,
       responseType: 'arraybuffer',
       timeout: REQUEST_TIMEOUT_MS,
       headers: {
