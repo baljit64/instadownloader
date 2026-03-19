@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { response: upstream } = await proxyRequest<NodeJS.ReadableStream>(
+    const { response: upstream } = await proxyRequest<Readable>(
       {
         url: mediaUrl,
         method: 'GET',
@@ -207,7 +207,7 @@ export async function GET(request: NextRequest) {
     const ext = inferExtension(contentType, mediaType);
     const filename = `${providerParam}-media.${ext}`;
     const stream = upstream.data;
-    const body = Readable.toWeb(stream);
+    const body = Readable.toWeb(stream) as unknown as ReadableStream<Uint8Array>;
     const response = new NextResponse(body, {
       status: 200,
       headers: {

@@ -77,8 +77,9 @@ export default async function LocalizedProxyStatsPage({
   if (accessToken) {
     const tokenValue = resolvedSearchParams.token;
     const queryToken = Array.isArray(tokenValue) ? tokenValue[0] : tokenValue;
-    const headerToken = headers().get('x-proxy-stats-token');
-    const cookieToken = cookies().get('proxy_stats_token')?.value;
+    const [headerStore, cookieStore] = await Promise.all([headers(), cookies()]);
+    const headerToken = headerStore.get('x-proxy-stats-token');
+    const cookieToken = cookieStore.get('proxy_stats_token')?.value;
 
     if (![queryToken, headerToken, cookieToken].includes(accessToken)) {
       notFound();
