@@ -306,7 +306,7 @@ const englishDictionary = {
     description:
       'Send the media URL, platform name, and a screenshot of the error if one appears. That gives enough context to reproduce most extraction issues quickly.',
     emailLabel: 'Support email',
-    emailValue: 'support@igdown.io',
+    emailValue: 'support@igdown.pro',
     primaryAction: 'Email support',
     secondaryAction: 'Open proxy stats',
     supportCoverageLabel: 'Coverage',

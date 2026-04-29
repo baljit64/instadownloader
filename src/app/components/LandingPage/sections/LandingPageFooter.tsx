@@ -25,7 +25,7 @@ export default function LandingPageFooter({
               <IconGlyph name="instagram" className="h-6 w-6" strokeWidth={2} />
             </div>
             <p className="font-display text-[1.7rem] font-bold tracking-[-0.04em] text-white">
-              igdown.io
+              igdown.pro
             </p>
           </div>
           <p className="mt-5 text-sm leading-7 text-white/68">
@@ -40,7 +40,7 @@ export default function LandingPageFooter({
 
       <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-white/58 sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © {new Date().getFullYear()} igdown.io. {copy.copyright}
+          © {new Date().getFullYear()} igdown.pro. {copy.copyright}
         </p>
         <div className="flex items-center gap-3 text-white/55">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10">

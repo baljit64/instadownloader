@@ -24,7 +24,7 @@ export default function LandingPageHeader({
           </div>
           <div>
             <p className="font-display text-[1.85rem] font-bold tracking-[-0.04em] text-white">
-              igdown.io
+              igdown.pro
             </p>
           </div>
         </Link>
