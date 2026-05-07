@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-4 pb-20 pt-8 sm:px-6 lg:px-8">
+    <main className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 pb-20 pt-8 sm:px-6 lg:px-8">
       <section className="surface-card overflow-hidden rounded-[40px] px-6 pb-12 pt-12 sm:px-10 lg:px-14 lg:pb-16">
         <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
           <div className="mb-6 flex items-center gap-5">

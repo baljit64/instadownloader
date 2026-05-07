@@ -1,7 +1,5 @@
 import type { TranslationDictionary } from '../../../lib/i18n';
 import HeroDownloadForm from '../../HeroDownloadForm';
-import IconGlyph from '../../IconGlyph';
-import { heroDecorations, heroDots } from '../constants';
 
 interface HeroSectionProps {
   hero: TranslationDictionary['hero'];
@@ -9,36 +7,23 @@ interface HeroSectionProps {
 
 export default function HeroSection({ hero }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden px-4 pb-4 pt-10 text-center sm:px-10">
-      {heroDecorations.map((item) => (
-        <div
-          key={`${item.icon}-${item.className}`}
-          aria-hidden="true"
-          className={`absolute hidden h-14 w-14 items-center justify-center rounded-2xl ${item.className} ${item.toneClassName} animate-[drift_7s_ease-in-out_infinite] lg:flex`}
-        >
-          <IconGlyph name={item.icon} className="h-7 w-7" strokeWidth={2} />
-        </div>
-      ))}
-
-      {heroDots.map((className) => (
-        <span
-          key={className}
-          aria-hidden="true"
-          className={`absolute hidden h-2.5 w-2.5 rounded-full opacity-80 lg:block ${className}`}
-        />
-      ))}
-
-      <div className="ai-hero-pill">
+    <section className="px-4 pb-4 pt-12 text-center sm:px-6">
+      <div className="mx-auto mb-4 flex max-w-2xl flex-wrap items-center justify-center gap-2">
         {hero.aiSignals.map((signal) => (
-          <span key={signal}>{signal}</span>
+          <span
+            key={signal}
+            className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-600"
+          >
+            {signal}
+          </span>
         ))}
       </div>
 
-      <h1 className="font-display mx-auto max-w-4xl text-4xl font-bold leading-tight tracking-[-0.05em] text-[#2a2d89] sm:text-6xl lg:text-[4.7rem]">
+      <h1 className="font-display mx-auto max-w-4xl text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-5xl">
         {hero.title}
       </h1>
 
-      <p className="mx-auto mt-7 max-w-2xl text-lg leading-9 text-[#333047] sm:text-[1.45rem]">
+      <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
         {hero.subtitle}
       </p>
 

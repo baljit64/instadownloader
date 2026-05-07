@@ -8,52 +8,50 @@ export default function ContactSection({ copy }: ContactSectionProps) {
   return (
     <section
       id="contact"
-      className="surface-card mt-10 rounded-[38px] px-6 py-10 sm:px-8 lg:px-10"
+      className="surface-card mt-12 rounded-2xl p-6 sm:p-8"
     >
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
         <div>
-          <span className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
+          <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
             {copy.eyebrow}
           </span>
-          <h2 className="font-display mt-4 text-4xl font-bold tracking-[-0.04em] text-[#171923] sm:text-[3.1rem]">
+          <h2 className="font-display mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
             {copy.title}
           </h2>
-          <p className="mt-5 max-w-2xl text-base leading-8 text-[#726a92]">
+          <p className="mt-3 max-w-2xl text-base leading-7 text-slate-600">
             {copy.description}
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-6">
             <a
               href={`mailto:${copy.emailValue}`}
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#7a66f2,#8c71ff)] px-6 text-sm font-semibold text-white shadow-[0_18px_30px_rgba(122,102,242,0.22)] transition hover:brightness-105"
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
               {copy.primaryAction}
             </a>
           </div>
         </div>
 
-        <div className="grid gap-4">
-          <article className="rounded-[28px] border border-white/80 bg-white/82 px-5 py-5 shadow-[0_18px_40px_rgba(118,99,255,0.08)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#6e6a86]">
+        <div className="grid gap-3">
+          <article className="rounded-xl border border-slate-200 bg-white p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               {copy.emailLabel}
             </p>
-            <p className="mt-3 font-display text-2xl font-bold tracking-[-0.03em] text-[#171923]">
+            <p className="mt-2 font-display text-base font-semibold text-slate-900">
               {copy.emailValue}
             </p>
           </article>
-          <article className="rounded-[28px] border border-white/80 bg-white/82 px-5 py-5 shadow-[0_18px_40px_rgba(118,99,255,0.08)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#6e6a86]">
+          <article className="rounded-xl border border-slate-200 bg-white p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               {copy.supportCasesLabel}
             </p>
-            <p className="mt-3 text-sm leading-7 text-[#171923]">
-              {copy.supportCasesValue}
-            </p>
+            <p className="mt-2 text-sm leading-6 text-slate-700">{copy.supportCasesValue}</p>
           </article>
-          <article className="rounded-[28px] border border-white/80 bg-white/82 px-5 py-5 shadow-[0_18px_40px_rgba(118,99,255,0.08)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#6e6a86]">
+          <article className="rounded-xl border border-slate-200 bg-white p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               {copy.supportCoverageLabel}
             </p>
-            <p className="mt-3 text-sm leading-7 text-[#171923]">
+            <p className="mt-2 text-sm leading-6 text-slate-700">
               {copy.supportCoverageValue}
             </p>
           </article>

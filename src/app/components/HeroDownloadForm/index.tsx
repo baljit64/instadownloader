@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense, useDeferredValue, useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Alert, Button, Form, Input } from 'antd';
 import {
   isSupportedMediaUrl,
@@ -9,7 +9,6 @@ import {
 } from '../../lib/media';
 import type { TranslationDictionary } from '../../lib/i18n';
 import IconGlyph from '../IconGlyph';
-import { getAssistantState } from './assistant-state';
 
 const InstagramMediaPreviewGrid = lazy(() => import('../InstagramMediaPreviewGrid'));
 
@@ -38,14 +37,14 @@ function MediaPreviewGridFallback() {
       {Array.from({ length: 3 }).map((_, index) => (
         <div
           key={index}
-          className="hero-media-card overflow-hidden rounded-[28px] border border-white/70 bg-white/80 p-3 shadow-[0_20px_48px_rgba(110,91,243,0.12)]"
+          className="overflow-hidden rounded-xl border border-slate-200 bg-white p-3"
         >
           <div className="mb-3 flex items-center justify-between">
-            <div className="h-4 w-20 animate-pulse rounded-full bg-[#ddd5ff]" />
-            <div className="h-6 w-16 animate-pulse rounded-full bg-[#ebe6ff]" />
+            <div className="h-4 w-20 animate-pulse rounded-full bg-slate-200" />
+            <div className="h-6 w-16 animate-pulse rounded-full bg-slate-100" />
           </div>
-          <div className="mb-4 h-56 animate-pulse rounded-[20px] bg-[linear-gradient(135deg,#f4efff,#ece8ff)]" />
-          <div className="h-11 animate-pulse rounded-full bg-[linear-gradient(135deg,#7f71ff,#9b8cff)] opacity-75" />
+          <div className="mb-4 h-56 animate-pulse rounded-lg bg-slate-100" />
+          <div className="h-11 animate-pulse rounded-lg bg-slate-200" />
         </div>
       ))}
     </div>
@@ -57,10 +56,6 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
   const [status, setStatus] = useState<DownloaderStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [media, setMedia] = useState<MediaItem[]>([]);
-  const watchedUrl = Form.useWatch('url', form) ?? '';
-  const deferredUrl = useDeferredValue(watchedUrl);
-  const assistantState = getAssistantState(copy, deferredUrl);
-
   const isLoading = status === 'loading';
 
   async function handleFinish(values: FormValues) {
@@ -120,7 +115,7 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
   }
 
   return (
-    <div className="mx-auto mt-10 w-full max-w-3xl">
+    <div className="mx-auto mt-8 w-full max-w-3xl">
       <div className="hero-download-shell">
         <Form<FormValues>
           form={form}
@@ -171,21 +166,14 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
                 {isLoading ? copy.buttonLoading : copy.buttonDownload}
               </Button>
             </div>
-
-            <div className="hero-search-caption">
-              <span>{copy.moreOptions}</span>
-              <span aria-hidden="true">v</span>
-            </div>
           </div>
-
-
         </Form>
 
         <p className="hero-download-note">
           {copy.note}
         </p>
 
-                <div className="hero-format-rail">
+        <div className="hero-format-rail">
           {formats.map((item) => (
             <span
               key={item}
@@ -201,31 +189,6 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
             <InstagramMediaPreviewGrid media={media} />
           </Suspense>
         ) : null}
-
-        {/* <div
-          className={`ai-assist-panel ai-assist-panel-${assistantState.tone}`}
-          aria-live="polite"
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="ai-assist-badge">
-              <span className="ai-assist-badge-dot" />
-              {copy.aiAssist.badge}
-            </span>
-            {assistantState.chips.map((chip) => (
-              <span key={chip} className="ai-assist-chip">
-                {chip}
-              </span>
-            ))}
-          </div>
-          <h3 className="mt-4 font-display text-2xl font-bold tracking-[-0.03em] text-[#17142d]">
-            {assistantState.title}
-          </h3>
-          <p className="mt-3 text-sm leading-7 text-[#6d6885]">
-            {assistantState.message}
-          </p>
-        </div> */}
-
-
 
         {status === 'error' && errorMessage ? (
           <Alert

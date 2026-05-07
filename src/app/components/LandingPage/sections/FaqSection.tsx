@@ -10,26 +10,26 @@ export default function FaqSection({ homepageFaqs }: FaqSectionProps) {
   }
 
   return (
-    <section className="surface-card mt-10 rounded-[38px] px-6 py-10 sm:px-8">
+    <section className="surface-card mt-12 rounded-2xl p-6 sm:p-8">
       <div className="max-w-3xl">
-        <span className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
+        <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
           Frequently asked
         </span>
-        <h2 className="font-display mt-4 text-4xl font-bold tracking-[-0.04em] text-[#171923] sm:text-[3.1rem]">
+        <h2 className="font-display mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
           Common Instagram downloader questions
         </h2>
       </div>
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-6 space-y-3">
         {homepageFaqs.map((faq) => (
           <details
             key={faq.question}
-            className="rounded-[24px] border border-white/80 bg-white/82 px-5 py-5 shadow-[0_18px_40px_rgba(118,99,255,0.08)]"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-4"
           >
-            <summary className="cursor-pointer list-none text-lg font-semibold text-[#171923]">
+            <summary className="cursor-pointer list-none text-base font-semibold text-slate-900">
               {faq.question}
             </summary>
-            <p className="mt-4 text-sm leading-7 text-[#6d6885]">{faq.answer}</p>
+            <p className="mt-3 text-sm leading-6 text-slate-600">{faq.answer}</p>
           </details>
         ))}
       </div>

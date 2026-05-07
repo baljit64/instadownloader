@@ -10,7 +10,9 @@ interface InstagramMediaPreviewGridProps {
 
 export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPreviewGridProps) {
   const [downloading, setDownloading] = useState<Record<number, boolean>>({});
-  const [imagePreviewMode, setImagePreviewMode] = useState<Record<number, 'proxy' | 'direct' | 'unavailable'>>({});
+  const [imagePreviewMode, setImagePreviewMode] = useState<
+    Record<number, 'proxy' | 'direct' | 'unavailable'>
+  >({});
 
   useEffect(() => {
     setImagePreviewMode({});
@@ -88,12 +90,11 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
       {media.map((item, index) => (
         <Card
           key={`${item.type}-${index}`}
-          className="hero-media-card overflow-hidden rounded-[28px] border border-white/70 bg-white/80 shadow-[0_20px_48px_rgba(110,91,243,0.12)]"
-          styles={{body:{padding: 12}}}
-     
+          className="hero-media-card overflow-hidden rounded-xl border bg-white"
+          styles={{ body: { padding: 12 } }}
         >
           <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-[#241c4c]">Media {index + 1}</h3>
+            <h3 className="text-sm font-semibold text-slate-900">Media {index + 1}</h3>
             <div className="flex items-center gap-2">
               {item.provider ? <Tag>{item.provider.toUpperCase()}</Tag> : null}
               <Tag color={item.type === 'video' ? 'processing' : 'success'}>
@@ -102,7 +103,7 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
             </div>
           </div>
 
-          <div className="mb-4 overflow-hidden rounded-[20px] bg-[#f5f1ff]">
+          <div className="mb-4 overflow-hidden rounded-lg bg-slate-100">
             {item.type === 'video' ? (
               <video
                 controls
@@ -111,7 +112,7 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
                 className="h-56 w-full object-cover"
               />
             ) : imagePreviewMode[index] === 'unavailable' ? (
-              <div className="flex h-56 w-full items-center justify-center bg-[linear-gradient(135deg,#f7f2ff,#ece8ff)] px-6 text-center text-sm font-medium text-[#6f6893]">
+              <div className="flex h-56 w-full items-center justify-center bg-slate-100 px-6 text-center text-sm font-medium text-slate-600">
                 Image preview unavailable. Use download to fetch the original file.
               </div>
             ) : (

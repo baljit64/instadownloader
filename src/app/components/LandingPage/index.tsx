@@ -35,7 +35,7 @@ export default async function LandingPage({ dictionary, locale }: LandingPagePro
         />
       </Suspense>
 
-      <main className="relative z-10 mx-auto w-full max-w-6xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+      <main className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
         <Suspense fallback={null}>
           <StructuredDataScript data={content.homeStructuredData} />
         </Suspense>

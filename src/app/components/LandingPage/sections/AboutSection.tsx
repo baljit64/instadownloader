@@ -11,21 +11,21 @@ export default function AboutSection({ aboutCards, copy }: AboutSectionProps) {
   return (
     <section
       id="about"
-      className="surface-card mt-10 rounded-[38px] px-6 py-10 sm:px-8"
+      className="surface-card mt-12 rounded-2xl p-6 sm:p-8"
     >
-      <div className="mx-auto max-w-5xl text-center">
-        <span className="text-sm font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
+      <div className="mx-auto max-w-3xl text-center">
+        <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
           {copy.eyebrow}
         </span>
-        <h2 className="font-display mt-4 text-4xl font-bold tracking-[-0.04em] text-[#171923] sm:text-[3.1rem]">
+        <h2 className="font-display mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
           {copy.title}
         </h2>
-        <p className="mx-auto mt-5 max-w-5xl text-lg leading-9 text-[#5b5867]">
+        <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-slate-600">
           {copy.description}
         </p>
       </div>
 
-      <div className="mt-12 grid gap-6 md:grid-cols-2">
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
         {aboutCards.map((card) => (
           <DetailCard key={card.title} {...card} />
         ))}
