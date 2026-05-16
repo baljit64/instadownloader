@@ -697,9 +697,6 @@ function extractFromEmbedPage(
   context: ProxyRequestContext
 ): Promise<InstagramParseResult> {
   return (async () => {
-    const media: InstagramMediaItem[] = [];
-    const seen = new Set<string>();
-
     const cleanPath = (() => {
       const parsed = new URL(targetUrl);
       return parsed.pathname.replace(/\/$/, '');
@@ -707,79 +704,97 @@ function extractFromEmbedPage(
 
     const embedUrl = `https://www.instagram.com${cleanPath}/embed/captioned/`;
 
-    const { response } = await proxyRequest<string>(
-      {
-        url: embedUrl,
-        method: 'GET',
-        headers: {
-          ...EMBED_REQUEST_HEADERS,
-          Referer: 'https://www.instagram.com/',
+    const requestEmbed = async (useProxy: boolean): Promise<InstagramParseResult> => {
+      const media: InstagramMediaItem[] = [];
+      const seen = new Set<string>();
+
+      const { response } = await proxyRequest<string>(
+        {
+          url: embedUrl,
+          method: 'GET',
+          headers: {
+            ...EMBED_REQUEST_HEADERS,
+            Referer: 'https://www.instagram.com/',
+          },
+          timeout: REQUEST_TIMEOUT_MS,
+          validateStatus: () => true,
         },
-        timeout: REQUEST_TIMEOUT_MS,
-        validateStatus: () => true,
-      },
-      {
-        requestId: context.requestId,
-        name: 'instagram.embed',
-        proxySelection: context.proxySelection,
-        rotateOnRetry: true,
-      }
-    );
+        {
+          requestId: context.requestId,
+          name: useProxy ? 'instagram.embed.proxy' : 'instagram.embed.direct',
+          proxySelection: useProxy ? context.proxySelection : undefined,
+          rotateOnRetry: true,
+          useProxy,
+        }
+      );
 
-    if (response.status === 404) {
-      return { media: [], statusHint: 'not_found' };
+      if (response.status === 404) {
+        return { media: [], statusHint: 'not_found' };
+      }
+
+      if (response.status === 403 || response.status === 401) {
+        const html = String(response.data ?? '');
+        if (isExplicitPrivateResponse(response.status, html)) {
+          return { media: [], statusHint: 'private' };
+        }
+        return { media: [], statusHint: 'ok' };
+      }
+
+      if (response.status >= 400 || !response.data) {
+        return { media: [], statusHint: 'ok' };
+      }
+
+      const html = String(response.data);
+
+      extractFromMetaTags(html, media, seen);
+      extractMediaFromApplicationJson(html, media, seen);
+
+      const $ = load(html);
+      $('video source, video').each((_index, element) => {
+        pushMedia(media, seen, $(element).attr('src'), 'video');
+        pushMedia(media, seen, $(element).attr('poster'), 'image');
+      });
+
+      $('.EmbeddedMediaImage').each((_index, element) => {
+        pushMedia(media, seen, $(element).attr('src'), 'image');
+      });
+
+      $('[data-video-url]').each((_index, element) => {
+        pushMedia(media, seen, $(element).attr('data-video-url'), 'video');
+      });
+
+      $('img').each((_index, element) => {
+        const src = $(element).attr('src');
+        if (src && INSTAGRAM_MEDIA_HOST.test(src) && !isStaticAsset(src)) {
+          pushMedia(media, seen, src, 'image');
+        }
+      });
+
+      $('script').each((_index, element) => {
+        const scriptText = $(element).text().trim();
+        if (!scriptText) {
+          return;
+        }
+        if (!/shortcode_media|edge_sidecar_to_children|display_url|video_url|thumbnail_src|image_versions2|video_versions|graphql|items|media|xdt_shortcode_media/i.test(scriptText)) {
+          return;
+        }
+        collectMediaFromTextPayload(scriptText, media, seen);
+      });
+
+      return { media, statusHint: 'ok' };
+    };
+
+    const proxiedResult = await requestEmbed(true);
+    if (proxiedResult.media.length || !context.proxySelection.proxyUrl) {
+      return proxiedResult;
     }
 
-    if (response.status === 403 || response.status === 401) {
-      const html = String(response.data ?? '');
-      if (isExplicitPrivateResponse(response.status, html)) {
-        return { media: [], statusHint: 'private' };
-      }
-      return { media: [], statusHint: 'ok' };
+    const directResult = await requestEmbed(false);
+    if (directResult.media.length) {
+      return directResult;
     }
 
-    if (response.status >= 400 || !response.data) {
-      return { media: [], statusHint: 'ok' };
-    }
-
-    const html = String(response.data);
-
-    extractFromMetaTags(html, media, seen);
-    extractMediaFromApplicationJson(html, media, seen);
-
-    const $ = load(html);
-    $('video source, video').each((_index, element) => {
-      pushMedia(media, seen, $(element).attr('src'), 'video');
-      pushMedia(media, seen, $(element).attr('poster'), 'image');
-    });
-
-    $('.EmbeddedMediaImage').each((_index, element) => {
-      pushMedia(media, seen, $(element).attr('src'), 'image');
-    });
-
-    $('[data-video-url]').each((_index, element) => {
-      pushMedia(media, seen, $(element).attr('data-video-url'), 'video');
-    });
-
-    $('img').each((_index, element) => {
-      const src = $(element).attr('src');
-      if (src && INSTAGRAM_MEDIA_HOST.test(src) && !isStaticAsset(src)) {
-        pushMedia(media, seen, src, 'image');
-      }
-    });
-
-    $('script').each((_index, element) => {
-      const scriptText = $(element).text().trim();
-      if (!scriptText) {
-        return;
-      }
-      if (!/shortcode_media|edge_sidecar_to_children|display_url|video_url|thumbnail_src|image_versions2|video_versions|graphql|items|media|xdt_shortcode_media/i.test(scriptText)) {
-        return;
-      }
-      collectMediaFromTextPayload(scriptText, media, seen);
-    });
-
-    return { media, statusHint: media.length ? 'ok' : 'ok' };
+    return proxiedResult;
   })();
 }
 
@@ -889,57 +904,74 @@ async function extractFromOEmbed(
   targetUrl: string,
   context: ProxyRequestContext
 ): Promise<InstagramParseResult> {
-  const media: InstagramMediaItem[] = [];
-  const seen = new Set<string>();
+  const endpoint = `https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(targetUrl)}`;
 
-  try {
-    const { response } = await proxyRequest(
-      {
-        url: `https://www.instagram.com/api/v1/oembed/?url=${encodeURIComponent(targetUrl)}`,
-        method: 'GET',
-        headers: REQUEST_HEADERS,
-        timeout: REQUEST_TIMEOUT_MS,
-        validateStatus: () => true,
-      },
-      {
-        requestId: context.requestId,
-        name: 'instagram.oembed',
-        proxySelection: context.proxySelection,
-        rotateOnRetry: true,
+  const requestOembed = async (useProxy: boolean): Promise<InstagramParseResult> => {
+    const media: InstagramMediaItem[] = [];
+    const seen = new Set<string>();
+
+    try {
+      const { response } = await proxyRequest(
+        {
+          url: endpoint,
+          method: 'GET',
+          headers: REQUEST_HEADERS,
+          timeout: REQUEST_TIMEOUT_MS,
+          validateStatus: () => true,
+        },
+        {
+          requestId: context.requestId,
+          name: useProxy ? 'instagram.oembed.proxy' : 'instagram.oembed.direct',
+          proxySelection: useProxy ? context.proxySelection : undefined,
+          rotateOnRetry: true,
+          useProxy,
+        }
+      );
+
+      if (response.status >= 400 || !response.data) {
+        return {
+          media: [],
+          statusHint: response.status === 404 ? 'not_found' : 'ok',
+        };
       }
-    );
 
-    if (response.status >= 400 || !response.data) {
-      return {
-        media: [],
-        statusHint: response.status === 404 ? 'not_found' : 'ok',
-      };
+      const data =
+        typeof response.data === 'string'
+          ? parseJsonSafely(response.data)
+          : response.data;
+
+      const obj = asRecord(data);
+      if (!obj) {
+        return { media: [], statusHint: 'ok' };
+      }
+
+      if (typeof obj.thumbnail_url === 'string') {
+        pushMedia(media, seen, obj.thumbnail_url, 'image');
+      }
+
+      if (typeof obj.html === 'string') {
+        const $ = load(obj.html as string);
+        $('img').each((_i, el) => pushMedia(media, seen, $(el).attr('src'), 'image'));
+        $('video').each((_i, el) => pushMedia(media, seen, $(el).attr('src'), 'video'));
+      }
+    } catch {
+      // oEmbed is a best-effort fallback
     }
 
-    const data =
-      typeof response.data === 'string'
-        ? parseJsonSafely(response.data)
-        : response.data;
+    return { media, statusHint: 'ok' };
+  };
 
-    const obj = asRecord(data);
-    if (!obj) {
-      return { media: [], statusHint: 'ok' };
-    }
-
-    if (typeof obj.thumbnail_url === 'string') {
-      pushMedia(media, seen, obj.thumbnail_url, 'image');
-    }
-
-    if (typeof obj.html === 'string') {
-      const $ = load(obj.html as string);
-      $('img').each((_i, el) => pushMedia(media, seen, $(el).attr('src'), 'image'));
-      $('video').each((_i, el) => pushMedia(media, seen, $(el).attr('src'), 'video'));
-    }
-  } catch {
-    // oEmbed is a best-effort fallback
+  const proxiedResult = await requestOembed(true);
+  if (proxiedResult.media.length || !context.proxySelection.proxyUrl) {
+    return proxiedResult;
   }
 
-  return { media, statusHint: 'ok' };
+  const directResult = await requestOembed(false);
+  if (directResult.media.length) {
+    return directResult;
+  }
+
+  return proxiedResult;
 }
 
 function prioritizeMedia(media: InstagramMediaItem[]): InstagramMediaItem[] {
