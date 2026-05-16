@@ -38,7 +38,7 @@ export default async function NotFound() {
             Back to Home
           </Link>
           <Link
-            href="/instagram-downloader"
+            href="/en"
             prefetch={false}
             className="inline-flex h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-6 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
           >
@@ -48,11 +48,11 @@ export default async function NotFound() {
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-sm">
           <Link
-            href="/insta-downloader"
+            href="/instagram-video-downloader"
             prefetch={false}
             className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-slate-600 transition hover:border-blue-300 hover:text-blue-700"
           >
-            Insta Downloader
+            Video Downloader
           </Link>
           <Link
             href="/instagram-reel-downloader"

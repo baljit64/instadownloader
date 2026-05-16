@@ -137,7 +137,20 @@ export default async function RootLayout({
         description: siteDescription,
       },
       {
-        '@type': 'WebApplication',
+        '@type': 'Organization',
+        name: siteName,
+        url: siteUrl,
+        logo: absoluteUrl('/pwa/icon-512.png'),
+        contactPoint: [
+          {
+            '@type': 'ContactPoint',
+            contactType: 'customer support',
+            email: 'support@igdown.pro',
+          },
+        ],
+      },
+      {
+        '@type': 'SoftwareApplication',
         name: siteName,
         url: siteUrl,
         applicationCategory: 'MultimediaApplication',
@@ -170,7 +183,7 @@ export default async function RootLayout({
             <Script id="google-analytics" strategy="afterInteractive">
               {`
                 window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
+                window.gtag = function gtag(){window.dataLayer.push(arguments);};
                 gtag('js', new Date());
                 gtag('config', '${gaId}');
               `}

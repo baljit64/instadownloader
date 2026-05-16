@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "test:seo": "vitest run src/app/lib/__tests__/seo-pages.test.ts",
     "test:watch": "vitest"
   },
   "dependencies": {

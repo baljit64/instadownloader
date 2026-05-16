@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { locales } from './lib/i18n';
-import { seoPages } from './lib/seo-pages';
+import { activeSeoPages } from './lib/seo-pages';
 import { absoluteUrl } from './lib/site';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -10,11 +10,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: index === 0 ? 1 : 0.9,
   }));
 
-  const seoEntries: MetadataRoute.Sitemap = seoPages.map((page) => ({
+  const seoEntries: MetadataRoute.Sitemap = activeSeoPages.map((page) => ({
     url: absoluteUrl(`/${page.slug}`),
     changeFrequency: page.type === 'guide' ? 'monthly' : 'weekly',
-    priority:
-      page.slug === 'instagram-downloader' ? 0.95 : page.type === 'tool' ? 0.88 : 0.82,
+    priority: page.type === 'tool' ? 0.88 : 0.82,
   }));
 
   return [...localeEntries, ...seoEntries];

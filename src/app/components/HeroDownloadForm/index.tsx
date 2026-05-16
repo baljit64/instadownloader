@@ -7,6 +7,7 @@ import {
   normalizeSupportedMediaUrl,
   type MediaItem,
 } from '../../lib/media';
+import { trackAnalyticsEvent } from '../../lib/analytics';
 import IconGlyph from '../IconGlyph';
 
 const InstagramMediaPreviewGrid = lazy(() => import('../InstagramMediaPreviewGrid'));
@@ -79,6 +80,9 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
     } catch {
       setStatus('error');
       setErrorMessage(copy.validations.unsupported);
+      trackAnalyticsEvent('downloader_form_submit_invalid_url', {
+        source: 'hero_download_form',
+      });
       return;
     }
 
@@ -86,6 +90,9 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
     setStatus('loading');
     setErrorMessage('');
     setMedia([]);
+    trackAnalyticsEvent('downloader_form_submit', {
+      source: 'hero_download_form',
+    });
 
     try {
       const response = await fetch('/api/media-extract', {
@@ -112,11 +119,18 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
 
       setMedia(mediaItems);
       setStatus('success');
+      trackAnalyticsEvent('media_extraction_success', {
+        media_count: mediaItems.length,
+        source: 'hero_download_form',
+      });
     } catch (error) {
       setStatus('error');
       setErrorMessage(
         error instanceof Error ? error.message : copy.errors.fetchFailure
       );
+      trackAnalyticsEvent('media_extraction_failed', {
+        source: 'hero_download_form',
+      });
     }
   }
 

@@ -29,28 +29,6 @@ function buildStructuredData(page: SeoPageConfig) {
           },
         ],
       },
-      {
-        '@type': 'FAQPage',
-        mainEntity: page.faqs.map((faq) => ({
-          '@type': 'Question',
-          name: faq.question,
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: faq.answer,
-          },
-        })),
-      },
-      {
-        '@type': 'HowTo',
-        name: page.heroTitle,
-        description: page.heroDescription,
-        step: page.steps.map((step, index) => ({
-          '@type': 'HowToStep',
-          position: index + 1,
-          name: step.title,
-          text: step.description,
-        })),
-      },
     ],
   };
 }
@@ -101,11 +79,11 @@ export default function SeoContentPage({
             Open downloader
           </Link>
           <Link
-            href="/instagram-downloader"
+            href="/en"
             prefetch={false}
             className="inline-flex h-11 items-center justify-center rounded-xl border border-[rgba(130,113,255,0.18)] bg-white/82 px-5 text-sm font-semibold text-[#171923] transition hover:border-[#2d7cff] hover:text-[#2d7cff]"
           >
-            Main Instagram page
+            Main downloader page
           </Link>
         </div>
       </section>

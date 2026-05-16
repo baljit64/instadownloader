@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import SeoContentPage from '../components/SeoContentPage';
 import { buildSeoPageMetadata, getSeoPage, seoPageMap } from './seo-pages';
 
@@ -20,9 +20,15 @@ export function renderSeoRoute(slug: string) {
     notFound();
   }
 
+  if (page.status === 'pruned') {
+    permanentRedirect(page.canonicalTarget);
+  }
+
   const relatedPages = page.relatedSlugs
     .map((relatedSlug) => seoPageMap[relatedSlug])
-    .filter(Boolean);
+    .filter((relatedPage): relatedPage is typeof page =>
+      Boolean(relatedPage && relatedPage.status === 'active')
+    );
 
   return <SeoContentPage page={page} relatedPages={relatedPages} />;
 }

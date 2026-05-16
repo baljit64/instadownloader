@@ -1,6 +1,5 @@
 import type { IconGlyphName } from '../IconGlyph';
 import { getLocalePath, type Locale, type TranslationDictionary } from '../../lib/i18n';
-import { absoluteUrl } from '../../lib/site';
 import { seoPageMap, type SeoFaq, type SeoPageConfig } from '../../lib/seo-pages';
 import {
   aboutFeatureIcons,
@@ -111,72 +110,35 @@ export function getLandingPageContent(
   const featuredSeoPages: SeoPageConfig[] =
     locale === 'en'
       ? [
-          'instagram-downloader',
-          'insta-downloader',
+          'download-instagram-post-by-link',
+          'download-instagram-reel-by-link',
+          'instagram-downloader-no-login',
+          'instagram-downloader-without-app',
           'instagram-post-downloader',
           'instagram-reel-downloader',
+          'instagram-download-not-working',
         ]
           .map((slug) => seoPageMap[slug])
-          .filter((page): page is SeoPageConfig => Boolean(page))
+          .filter(
+            (page): page is SeoPageConfig => Boolean(page && page.status === 'active')
+          )
       : [];
 
   const homepageFaqs: SeoFaq[] =
     locale === 'en'
       ? [
-          seoPageMap['instagram-downloader']?.faqs[0],
+          seoPageMap['download-instagram-post-by-link']?.faqs[0],
           seoPageMap['instagram-reel-downloader']?.faqs[0],
         ].filter((faq): faq is SeoFaq => Boolean(faq))
       : [];
 
-  const homeStructuredData =
-    locale === 'en'
-      ? {
-          '@context': 'https://schema.org',
-          '@graph': [
-            {
-              '@type': 'CollectionPage',
-              name: 'Instagram Downloader',
-              description: dictionary.metadata.homeDescription,
-              url: absoluteUrl('/en'),
-              keywords: [
-                'instagram downloader',
-                'insta downloader',
-                'ig downloader',
-                'download instagram post link',
-                'download instagram reel link',
-                'instagram video downloader',
-              ].join(', '),
-            },
-            {
-              '@type': 'FAQPage',
-              mainEntity: homepageFaqs.map((faq) => ({
-                '@type': 'Question',
-                name: faq.question,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: faq.answer,
-                },
-              })),
-            },
-            {
-              '@type': 'ItemList',
-              name: 'Instagram download resources',
-              itemListElement: featuredSeoPages.map((page, index) => ({
-                '@type': 'ListItem',
-                position: index + 1,
-                name: page.shortTitle,
-                url: absoluteUrl(`/${page.slug}`),
-              })),
-            },
-          ],
-        }
-      : null;
+  const homeStructuredData = null;
 
   const footerProductLinks =
     locale === 'en'
       ? [
-          { href: '/instagram-downloader', label: 'Instagram Downloader' },
-          { href: '/insta-downloader', label: 'Insta Downloader' },
+          { href: '/en', label: 'Instagram Downloader' },
+          { href: '/instagram-post-downloader', label: 'Instagram Post Downloader' },
           { href: '/instagram-reel-downloader', label: 'Instagram Reel Downloader' },
         ]
       : [
@@ -216,12 +178,12 @@ export function getLandingPageContent(
   const popularSearchLinks: LandingPageLink[] =
     locale === 'en'
       ? [
-          { href: '/instagram-downloader', label: 'instagram downloader' },
-          { href: '/insta-downloader', label: 'insta downloader' },
-          { href: '/instagram-post-downloader', label: 'download instagram post link' },
-          { href: '/instagram-reel-downloader', label: 'download instagram reel link' },
+          { href: '/en', label: 'instagram downloader' },
+          { href: '/en', label: 'insta downloader' },
+          { href: '/en', label: 'ig downloader' },
+          { href: '/download-instagram-post-by-link', label: 'download instagram post link' },
+          { href: '/download-instagram-reel-by-link', label: 'download instagram reel link' },
           { href: '/instagram-video-downloader', label: 'instagram video downloader' },
-          { href: '/instagram-photo-downloader', label: 'instagram photo downloader' },
         ]
       : [];
 

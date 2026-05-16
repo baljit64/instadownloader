@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Card, Tag } from 'antd';
+import { trackAnalyticsEvent } from '../lib/analytics';
 import type { MediaItem } from '../lib/media';
 
 interface InstagramMediaPreviewGridProps {
@@ -66,6 +67,11 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
     const ext = item.type === 'video' ? 'mp4' : 'jpg';
     const filename = `${provider}-media-${index + 1}.${ext}`;
     const downloadUrl = getDownloadUrl(item);
+    trackAnalyticsEvent('media_download_click', {
+      media_type: item.type,
+      provider,
+      source: 'preview_grid',
+    });
 
     try {
       const response = await fetch(downloadUrl);
@@ -78,8 +84,18 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
       const blobUrl = URL.createObjectURL(blob);
       triggerBrowserDownload(blobUrl, filename);
       URL.revokeObjectURL(blobUrl);
+      trackAnalyticsEvent('media_download_success', {
+        media_type: item.type,
+        provider,
+        source: 'preview_grid',
+      });
     } catch {
       triggerBrowserDownload(downloadUrl, filename);
+      trackAnalyticsEvent('media_download_fallback', {
+        media_type: item.type,
+        provider,
+        source: 'preview_grid',
+      });
     } finally {
       setDownloading((prev) => ({ ...prev, [index]: false }));
     }
