@@ -2,6 +2,13 @@ import type { IconGlyphName } from '../IconGlyph';
 import { getLocalePath, type Locale, type TranslationDictionary } from '../../lib/i18n';
 import { seoPageMap, type SeoFaq, type SeoPageConfig } from '../../lib/seo-pages';
 import {
+  absoluteUrl,
+  siteAlternateNames,
+  siteDescription,
+  siteFeatureList,
+  siteName,
+} from '../../lib/site';
+import {
   aboutFeatureIcons,
   aiExperienceIcons,
   benefitVisuals,
@@ -132,7 +139,55 @@ export function getLandingPageContent(
         ].filter((faq): faq is SeoFaq => Boolean(faq))
       : [];
 
-  const homeStructuredData = null;
+  const localizedHomePath = getLocalePath(locale);
+  const localizedHomeUrl = absoluteUrl(localizedHomePath);
+  const faqMainEntity = homepageFaqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  }));
+
+  const homeStructuredData: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        name: dictionary.metadata.homeTitle,
+        description: dictionary.metadata.homeDescription,
+        url: localizedHomeUrl,
+        inLanguage: locale,
+      },
+      {
+        '@type': 'SoftwareApplication',
+        name: siteName,
+        alternateName: siteAlternateNames,
+        url: localizedHomeUrl,
+        description: siteDescription,
+        applicationCategory: 'UtilitiesApplication',
+        operatingSystem: 'Windows, macOS, Linux, Android, iOS',
+        browserRequirements: 'Requires JavaScript and a modern browser',
+        featureList: siteFeatureList,
+        isAccessibleForFree: true,
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+        },
+      },
+      ...(faqMainEntity.length
+        ? [
+            {
+              '@type': 'FAQPage',
+              inLanguage: locale,
+              mainEntity: faqMainEntity,
+            },
+          ]
+        : []),
+    ],
+  };
 
   const footerProductLinks =
     locale === 'en'

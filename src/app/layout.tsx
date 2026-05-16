@@ -9,8 +9,12 @@ import './globals.css';
 import { defaultLocale, isSupportedLocale, localeInfo } from './lib/i18n';
 import {
   absoluteUrl,
+  getOpenGraphImages,
   getSiteUrl,
+  getTwitterImages,
+  siteAlternateNames,
   siteDescription,
+  siteFeatureList,
   siteKeywords,
   siteName,
   siteTitle,
@@ -43,6 +47,9 @@ export const metadata: Metadata = {
   applicationName: siteName,
   keywords: siteKeywords,
   category: 'technology',
+  authors: [{ name: siteName, url: absoluteUrl('/en') }],
+  creator: siteName,
+  publisher: siteName,
   referrer: 'origin-when-cross-origin',
   formatDetection: {
     email: false,
@@ -90,16 +97,18 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    url: absoluteUrl('/'),
+    url: absoluteUrl('/en'),
     siteName,
     title: siteTitle,
     description: siteDescription,
     locale: 'en_US',
+    images: getOpenGraphImages(),
   },
   twitter: {
     card: 'summary_large_image',
     title: siteTitle,
     description: siteDescription,
+    images: getTwitterImages(),
   },
 };
 
@@ -126,21 +135,45 @@ export default async function RootLayout({
       : defaultLocale;
   const requestDir = requestHeaders.get('x-site-dir');
   const dir = requestDir === 'rtl' || requestDir === 'ltr' ? requestDir : localeInfo[locale].dir;
+  const homeUrl = absoluteUrl('/en');
+  const websiteId = `${siteUrl}/#website`;
+  const organizationId = `${siteUrl}/#organization`;
+  const appId = `${siteUrl}/#app`;
 
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@id': websiteId,
         '@type': 'WebSite',
         name: siteName,
-        url: siteUrl,
+        alternateName: siteAlternateNames,
+        url: homeUrl,
         description: siteDescription,
+        inLanguage: 'en',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${homeUrl}?q={search_term_string}`,
+          'query-input': 'required name=search_term_string',
+        },
       },
       {
+        '@type': 'WebPage',
+        name: siteTitle,
+        description: siteDescription,
+        url: homeUrl,
+        inLanguage: 'en',
+        isPartOf: {
+          '@id': websiteId,
+        },
+      },
+      {
+        '@id': organizationId,
         '@type': 'Organization',
         name: siteName,
         url: siteUrl,
         logo: absoluteUrl('/pwa/icon-512.png'),
+        sameAs: [siteUrl],
         contactPoint: [
           {
             '@type': 'ContactPoint',
@@ -151,16 +184,25 @@ export default async function RootLayout({
       },
       {
         '@type': 'SoftwareApplication',
+        '@id': appId,
         name: siteName,
-        url: siteUrl,
-        applicationCategory: 'MultimediaApplication',
-        operatingSystem: 'Any',
-        browserRequirements: 'Requires JavaScript',
+        alternateName: siteAlternateNames,
+        url: homeUrl,
+        applicationCategory: 'UtilitiesApplication',
+        operatingSystem: 'Windows, macOS, Linux, Android, iOS',
+        browserRequirements: 'Requires JavaScript and a modern browser',
         description: siteDescription,
+        featureList: siteFeatureList,
+        applicationSubCategory: 'Social Media Downloader',
+        isAccessibleForFree: true,
+        publisher: {
+          '@id': organizationId,
+        },
         offers: {
           '@type': 'Offer',
           price: '0',
           priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
         },
       },
     ],

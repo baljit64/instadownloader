@@ -35,7 +35,9 @@ export async function generateMetadata({
   const canonicalPath = getLocalePath(locale);
 
   return {
-    title: dictionary.metadata.homeTitle,
+    title: {
+      absolute: dictionary.metadata.homeTitle,
+    },
     description: dictionary.metadata.homeDescription,
     keywords: siteKeywords,
     alternates: {

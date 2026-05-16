@@ -110,8 +110,8 @@ export function detectPreferredLocale(acceptLanguage: string | null): Locale {
 const englishDictionary = {
   metadata: {
     homeDescription:
-      'Insta Downloader for public Instagram links. Paste a post or reel URL to download videos, photos, and carousel media quickly.',
-    homeTitle: 'Instagram Downloader for Posts & Reels',
+      'Fast, free, and secure Instagram downloader for public links. Download videos, photos, reels, IGTV, and carousel posts without login.',
+    homeTitle: 'Instagram Downloader - Download Video, Photos, Reels & IGTV',
     proxyStatsDescription: 'Daily Webshare proxy usage for the downloader backend.',
     proxyStatsTitle: 'Proxy Stats',
   },

@@ -3,6 +3,15 @@ import type { SeoPageConfig } from '../lib/seo-pages';
 import { absoluteUrl } from '../lib/site';
 
 function buildStructuredData(page: SeoPageConfig) {
+  const faqEntities = page.faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  }));
+
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -11,6 +20,7 @@ function buildStructuredData(page: SeoPageConfig) {
         name: page.metadataTitle,
         description: page.metadataDescription,
         url: absoluteUrl(`/${page.slug}`),
+        inLanguage: 'en',
       },
       {
         '@type': 'BreadcrumbList',
@@ -29,6 +39,15 @@ function buildStructuredData(page: SeoPageConfig) {
           },
         ],
       },
+      ...(faqEntities.length
+        ? [
+            {
+              '@type': 'FAQPage',
+              inLanguage: 'en',
+              mainEntity: faqEntities,
+            },
+          ]
+        : []),
     ],
   };
 }

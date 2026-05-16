@@ -1,22 +1,50 @@
 export const siteName = 'Insta Downloader';
 export const siteTitle =
-  'Instagram Downloader | Download Posts & Reels by Link';
+  'Instagram Downloader - Download Video, Photos, Reels & IGTV';
 export const siteDescription =
-  'Insta Downloader for public Instagram links. Paste a post or reel URL to download videos, photos, and carousel media quickly.';
+  'Fast, free, and secure Instagram downloader for public links. Download videos, photos, reels, IGTV, and carousel posts without login.';
 export const siteKeywords = [
   'instagram downloader',
   'insta downloader',
   'ig downloader',
+  'instagram video downloader',
+  'download instagram video',
+  'instagram photo downloader',
+  'download instagram photo',
+  'instagram reels downloader',
+  'download instagram reels',
+  'instagram igtv downloader',
+  'download instagram igtv',
+  'instagram carousel downloader',
+  'download instagram carousel',
+  'instagram story downloader',
+  'download instagram story',
+  'free instagram downloader',
+  'instagram downloader no login',
+  'online instagram downloader',
+  'instagram downloader by link',
+  'download instagram post by link',
+  'download instagram reel by link',
   'instagram post downloader',
   'instagram reel downloader',
-  'instagram video downloader',
-  'download instagram reel',
-  'download instagram post',
-  'download instagram post link',
-  'download instagram reel link',
-  'instagram photo downloader',
-  'instagram carousel downloader',
+  'save instagram videos',
+  'save instagram photos',
   'instagram link downloader',
+];
+
+export const siteAlternateNames = [
+  'Instagram Downloader',
+  'Insta Downloader',
+  'IG Downloader',
+];
+
+export const siteFeatureList = [
+  'Instagram video downloader',
+  'Instagram photo downloader',
+  'Instagram reels downloader',
+  'Instagram IGTV downloader',
+  'Instagram carousel downloader',
+  'Public-link downloader without login',
 ];
 
 function normalizeSiteUrl(value: string): string {
