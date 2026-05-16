@@ -38,9 +38,10 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-downloader',
     type: 'tool',
     shortTitle: 'Instagram Downloader',
-    metadataTitle: 'Instagram Downloader for Public Posts, Reels, Photos and Carousel Links',
+    metadataTitle:
+      'Instagram Downloader (Insta Downloader / IG Downloader) for Public Post and Reel Links',
     metadataDescription:
-      'Download public Instagram posts, reels, photos, and carousel media with a fast online Instagram downloader. Paste a public link and save the file.',
+      'Insta Downloader for public Instagram links. Download posts, reels, videos, photos, and carousel media online. Also searched as IG Downloader and InstaDownloader.',
     heroEyebrow: 'Instagram tool',
     heroTitle: 'Instagram Downloader for public posts, reels, photos, and carousel links',
     heroDescription:
@@ -49,7 +50,13 @@ export const seoPages: SeoPageConfig[] = [
       'This page targets the broad Instagram downloader intent. It focuses on public links only, which keeps the promise aligned with the actual product and reduces mismatch for users coming from search.',
     keywords: [
       'instagram downloader',
+      'insta downloader',
+      'ig downloader',
+      'instadownloader',
+      'igdown',
       'online instagram downloader',
+      'instagram video downloader',
+      'instagram link downloader',
       'download instagram post',
       'download instagram reel',
       'download instagram photo',
@@ -95,19 +102,154 @@ export const seoPages: SeoPageConfig[] = [
       },
     ],
     relatedSlugs: [
+      'insta-downloader',
+      'instagram-video-downloader',
       'instagram-post-downloader',
       'instagram-reel-downloader',
       'instagram-photo-downloader',
-      'instagram-carousel-downloader',
+    ],
+  },
+  {
+    slug: 'insta-downloader',
+    type: 'tool',
+    shortTitle: 'Insta Downloader',
+    metadataTitle: 'Insta Downloader (IG Downloader) for Public Instagram Post and Reel Links',
+    metadataDescription:
+      'Insta Downloader for users searching igdown, ig downloader, or instadownloader terms. Paste a public Instagram link and download posts, reels, videos, and photos.',
+    heroEyebrow: 'Insta downloader tool',
+    heroTitle: 'Insta Downloader and IG Downloader for public Instagram links',
+    heroDescription:
+      'This page targets users who search with shorthand terms like insta downloader, ig downloader, igdown, or instadownloader. The supported flow is still public-link only.',
+    description:
+      'Many users search with short brand-like terms instead of the full “Instagram downloader” phrase. This page aligns those short queries with the same clear public-link downloader workflow.',
+    keywords: [
+      'insta downloader',
+      'ig downloader',
+      'instadownloader',
+      'igdown',
+      'instagram link downloader',
+      'download instagram by link',
+    ],
+    highlights: [
+      'Built for shorthand query intent: insta downloader, ig downloader, and instadownloader.',
+      'Keeps user expectations clear with public-link-only messaging.',
+      'Uses the same preview-first downloader flow as the main Instagram tool page.',
+    ],
+    steps: [
+      {
+        title: 'Copy the Instagram post or reel URL',
+        description:
+          'Open the public media item on Instagram and copy the full link.',
+      },
+      {
+        title: 'Paste the link in the downloader input',
+        description:
+          'Submit the link so the extractor can validate and resolve the media.',
+      },
+      {
+        title: 'Preview and download the file',
+        description:
+          'Review the output card first, then use the download button.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Is Insta Downloader different from Instagram Downloader?',
+        answer:
+          'No. It is the same public-link workflow, but optimized for users who search with shorter terms.',
+      },
+      {
+        question: 'Can IG Downloader fetch private Instagram posts?',
+        answer:
+          'No. Like the rest of the site, this page supports public Instagram URLs only.',
+      },
+      {
+        question: 'Why include igdown and instadownloader terms?',
+        answer:
+          'These are common shorthand query styles users type, and matching that language can improve relevance for search intent.',
+      },
+    ],
+    relatedSlugs: [
+      'instagram-downloader',
+      'instagram-video-downloader',
+      'instagram-post-downloader',
+      'instagram-reel-downloader',
+    ],
+  },
+  {
+    slug: 'instagram-video-downloader',
+    type: 'tool',
+    shortTitle: 'Instagram Video Downloader',
+    metadataTitle: 'Instagram Video Downloader for Public Reels and Video Posts',
+    metadataDescription:
+      'Download public Instagram videos by link, including reels and video posts. This Instagram video downloader explains the best copy-link, preview, and save workflow.',
+    heroEyebrow: 'Instagram video tool',
+    heroTitle: 'Instagram Video Downloader for public reels and video posts',
+    heroDescription:
+      'This page targets video-specific intent from users who search for Instagram video downloads instead of general downloader terms.',
+    description:
+      'A dedicated Instagram video downloader page improves topical clarity for video intent and helps users find reel/video-focused instructions faster.',
+    keywords: [
+      'instagram video downloader',
+      'download instagram video',
+      'save instagram video',
+      'download instagram reels video',
+      'instagram reel video downloader',
+      'instagram video downloader online',
+    ],
+    highlights: [
+      'Focused on video and reel link intent instead of general Instagram downloader wording.',
+      'Explains public-link support and preview behavior before download.',
+      'Supports cleaner internal linking between video, reel, and troubleshooting pages.',
+    ],
+    steps: [
+      {
+        title: 'Copy a public Instagram video or reel link',
+        description:
+          'Use Instagram share options to copy the full video URL.',
+      },
+      {
+        title: 'Paste the video URL in the downloader',
+        description:
+          'Submit the link and wait for the extractor to return the preview result.',
+      },
+      {
+        title: 'Download the video',
+        description:
+          'Once resolved, click the download action from the media card.',
+      },
+    ],
+    faqs: [
+      {
+        question: 'Does this page work for both reels and feed videos?',
+        answer:
+          'Yes. The video page is for public reel links and other public Instagram video posts.',
+      },
+      {
+        question: 'Can I use this for private videos?',
+        answer:
+          'No. Private-content access is outside the supported public-link flow.',
+      },
+      {
+        question: 'Why have a separate video downloader page?',
+        answer:
+          'Users who search “Instagram video downloader” have distinct intent and expect video-focused guidance.',
+      },
+    ],
+    relatedSlugs: [
+      'instagram-reel-downloader',
+      'instagram-downloader',
+      'insta-downloader',
+      'instagram-download-not-working',
     ],
   },
   {
     slug: 'instagram-post-downloader',
     type: 'tool',
     shortTitle: 'Instagram Post Downloader',
-    metadataTitle: 'Instagram Post Downloader for Public Feed Posts',
+    metadataTitle: 'Instagram Post Downloader by Link for Public Feed Posts',
     metadataDescription:
-      'Download public Instagram posts from feed URLs. Learn how an Instagram post downloader should handle public links, previews, and download quality.',
+      'Download Instagram post links from public feed URLs. This Instagram post downloader covers copy-link, preview, and full-quality download flow.',
     heroEyebrow: 'Instagram post tool',
     heroTitle: 'Instagram Post Downloader for public feed links',
     heroDescription:
@@ -117,6 +259,9 @@ export const seoPages: SeoPageConfig[] = [
     keywords: [
       'instagram post downloader',
       'download instagram post',
+      'download instagram post link',
+      'download instagram posts hd',
+      'instagram post link downloader',
       'insta post download',
       'public instagram post downloader',
     ],
@@ -161,6 +306,8 @@ export const seoPages: SeoPageConfig[] = [
     ],
     relatedSlugs: [
       'instagram-downloader',
+      'insta-downloader',
+      'instagram-video-downloader',
       'instagram-carousel-downloader',
       'how-to-download-instagram-post',
       'public-vs-private-instagram-links',
@@ -170,9 +317,9 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-reel-downloader',
     type: 'tool',
     shortTitle: 'Instagram Reel Downloader',
-    metadataTitle: 'Instagram Reel Downloader for Public Reel Links',
+    metadataTitle: 'Instagram Reel Downloader by Link for Public Reels',
     metadataDescription:
-      'Download public Instagram reels with a reel-focused downloader page. Understand public URL support, preview handling, and common reel download issues.',
+      'Download Instagram reel links with a reel-focused page. Covers save Instagram reel intent, public URL support, preview handling, and common failures.',
     heroEyebrow: 'Instagram reel tool',
     heroTitle: 'Instagram Reel Downloader for public reel URLs',
     heroDescription:
@@ -182,6 +329,9 @@ export const seoPages: SeoPageConfig[] = [
     keywords: [
       'instagram reel downloader',
       'download instagram reel',
+      'download instagram reel link',
+      'save instagram reel',
+      'save instagram reels to phone',
       'public reel downloader',
       'instagram reels download',
     ],
@@ -225,8 +375,10 @@ export const seoPages: SeoPageConfig[] = [
       },
     ],
     relatedSlugs: [
+      'instagram-video-downloader',
       'instagram-downloader',
       'instagram-post-downloader',
+      'insta-downloader',
       'instagram-download-not-working',
       'public-vs-private-instagram-links',
     ],
@@ -247,6 +399,8 @@ export const seoPages: SeoPageConfig[] = [
     keywords: [
       'instagram photo downloader',
       'download instagram photo',
+      'instagram photo downloader online',
+      'instagram photo downloader full resolution',
       'instagram image downloader',
       'public instagram photo download',
     ],

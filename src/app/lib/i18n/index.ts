@@ -110,8 +110,8 @@ export function detectPreferredLocale(acceptLanguage: string | null): Locale {
 const englishDictionary = {
   metadata: {
     homeDescription:
-      'Download public Instagram reels, posts, photos, and carousel media online. Paste a public link to preview and save the file. Also supports public URLs from YouTube, TikTok, Facebook, X, and Pinterest.',
-    homeTitle: 'Instagram Downloader for Public Posts, Reels and Photos',
+      'Insta Downloader for public Instagram links. Download posts, reels, videos, photos, and carousel media online by link. Also supports public URLs from YouTube, TikTok, Facebook, X, and Pinterest.',
+    homeTitle: 'Instagram Downloader (Insta Downloader) for Public Post and Reel Links',
     proxyStatsDescription: 'Daily Webshare proxy usage for the downloader backend.',
     proxyStatsTitle: 'Proxy Stats',
   },
@@ -163,8 +163,8 @@ const englishDictionary = {
     moreOptions: 'More options',
     note: 'Use it. It is easy, fast and secure.',
     subtitle:
-      'Paste the URL of insta video, photo, reels or IGTV link you want to download.',
-    title: 'Paste Instagram URL here!',
+      'Paste an Instagram post, reel, video, or photo link to preview and download.',
+    title: 'Instagram Downloader: Paste a post or reel URL',
     validations: {
       required: 'Paste a supported public media URL first.',
       unsupported:

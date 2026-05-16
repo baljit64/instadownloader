@@ -61,6 +61,7 @@ export interface LandingPageContent {
   homeStructuredData: Record<string, unknown> | null;
   homepageFaqs: SeoFaq[];
   navigation: LandingPageLink[];
+  popularSearchLinks: LandingPageLink[];
   spotlightSections: SpotlightItem[];
   websiteTiles: WebsiteTile[];
 }
@@ -111,6 +112,8 @@ export function getLandingPageContent(
     locale === 'en'
       ? [
           'instagram-downloader',
+          'insta-downloader',
+          'instagram-video-downloader',
           'instagram-post-downloader',
           'instagram-reel-downloader',
           'instagram-photo-downloader',
@@ -139,9 +142,17 @@ export function getLandingPageContent(
             {
               '@type': 'CollectionPage',
               name: 'Instagram Downloader',
-                description: dictionary.metadata.homeDescription,
-                url: absoluteUrl('/en'),
-              },
+              description: dictionary.metadata.homeDescription,
+              url: absoluteUrl('/en'),
+              keywords: [
+                'instagram downloader',
+                'insta downloader',
+                'ig downloader',
+                'download instagram post link',
+                'download instagram reel link',
+                'instagram video downloader',
+              ].join(', '),
+            },
             {
               '@type': 'FAQPage',
               mainEntity: homepageFaqs.map((faq) => ({
@@ -171,6 +182,8 @@ export function getLandingPageContent(
     locale === 'en'
       ? [
           { href: '/instagram-downloader', label: 'Instagram Downloader' },
+          { href: '/insta-downloader', label: 'Insta Downloader' },
+          { href: '/instagram-video-downloader', label: 'Instagram Video Downloader' },
           { href: '/instagram-photo-downloader', label: 'Instagram Photo Downloader' },
           { href: '/instagram-reel-downloader', label: 'Instagram Reel Downloader' },
         ]
@@ -208,6 +221,18 @@ export function getLandingPageContent(
           { href: '#contact', label: dictionary.footer.links.contact },
         ];
 
+  const popularSearchLinks: LandingPageLink[] =
+    locale === 'en'
+      ? [
+          { href: '/instagram-downloader', label: 'instagram downloader' },
+          { href: '/insta-downloader', label: 'insta downloader' },
+          { href: '/instagram-post-downloader', label: 'download instagram post link' },
+          { href: '/instagram-reel-downloader', label: 'download instagram reel link' },
+          { href: '/instagram-video-downloader', label: 'instagram video downloader' },
+          { href: '/instagram-photo-downloader', label: 'instagram photo downloader' },
+        ]
+      : [];
+
   return {
     aboutCards,
     aiExperienceCards,
@@ -219,6 +244,7 @@ export function getLandingPageContent(
     homeStructuredData,
     homepageFaqs,
     navigation,
+    popularSearchLinks,
     spotlightSections,
     websiteTiles,
   };

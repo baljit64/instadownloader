@@ -1,15 +1,24 @@
 export const siteName = 'Insta Downloader';
 export const siteTitle =
-  'Instagram Downloader | Download Public Reels, Posts, Photos and Carousel Links';
+  'Instagram Downloader (Insta Downloader) | Download Post, Reel, Video and Photo Links';
 export const siteDescription =
-  'Download public Instagram reels, posts, photos, and carousel media online. Paste a public link to preview and save the file. Also supports public URLs from YouTube, TikTok, Facebook, X, and Pinterest.';
+  'Insta Downloader for public Instagram links. Download reels, posts, videos, photos, and carousel media by pasting a link. Also known as IG Downloader and InstaDownloader.';
 export const siteKeywords = [
   'instagram downloader',
+  'insta downloader',
+  'ig downloader',
+  'instadownloader',
+  'igdown',
   'instagram post downloader',
   'instagram reel downloader',
+  'instagram video downloader',
+  'instagram link downloader',
   'download instagram reel',
   'download instagram post',
-  'instagram video downloader',
+  'download instagram post link',
+  'download instagram reel link',
+  'save instagram reel',
+  'save instagram video',
   'instagram photo downloader',
   'instagram image downloader',
   'instagram carousel downloader',

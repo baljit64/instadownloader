@@ -9,6 +9,7 @@ const FaqSection = lazy(() => import('./sections/FaqSection'));
 const HeroSection = lazy(() => import('./sections/HeroSection'));
 const LandingPageFooter = lazy(() => import('./sections/LandingPageFooter'));
 const LandingPageHeader = lazy(() => import('./sections/LandingPageHeader'));
+const PopularSearchesSection = lazy(() => import('./sections/PopularSearchesSection'));
 const SeoResourcesSection = lazy(() => import('./sections/SeoResourcesSection'));
 const SpotlightSections = lazy(() => import('./sections/SpotlightSections'));
 const StructuredDataScript = lazy(() => import('./sections/StructuredDataScript'));
@@ -44,6 +45,9 @@ export default async function LandingPage({ dictionary, locale }: LandingPagePro
         </Suspense>
         <Suspense fallback={null}>
           <BenefitsSection benefits={content.benefits} />
+        </Suspense>
+        <Suspense fallback={null}>
+          <PopularSearchesSection links={content.popularSearchLinks} />
         </Suspense>
         <Suspense fallback={null}>
           <AiExperienceSection
