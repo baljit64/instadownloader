@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import type { TranslationDictionary } from '../../../lib/i18n';
 import type { WebsiteTile } from '../content';
 
@@ -11,6 +10,22 @@ export default function SupportedPlatformsSection({
   copy,
   websiteTiles,
 }: SupportedPlatformsSectionProps) {
+  const getPlatformBadge = (label: string) => {
+    const normalized = label.trim();
+
+    if (!normalized) {
+      return 'NA';
+    }
+
+    const words = normalized.split(/[^A-Za-z0-9]+/).filter(Boolean);
+    const letters =
+      words.length > 1
+        ? `${words[0][0] ?? ''}${words[1][0] ?? ''}`
+        : (words[0] ?? '').slice(0, 2);
+
+    return letters.toUpperCase();
+  };
+
   return (
     <section
       id="supported-platforms"
@@ -33,15 +48,11 @@ export default function SupportedPlatformsSection({
             className="rounded-xl border border-slate-200 bg-white p-4 text-left"
           >
             <div className="flex items-start justify-between gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-100">
-                <Image
-                  src={tile.icon}
-                  alt=""
-                  width={30}
-                  height={30}
-                  unoptimized
-                  className="h-7 w-7 object-contain"
-                />
+              <div
+                className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-100 text-xs font-semibold text-slate-700"
+                aria-label={`${tile.label} platform`}
+              >
+                {getPlatformBadge(tile.label)}
               </div>
               <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${tile.statusTone}`}>
                 {tile.status}

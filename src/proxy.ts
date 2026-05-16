@@ -56,6 +56,16 @@ function applyLocaleHeaders(request: NextRequest, locale: Locale) {
 }
 
 export function proxy(request: NextRequest) {
+  const hostHeader = request.headers.get('host');
+  const normalizedHost = hostHeader?.toLowerCase() ?? '';
+
+  // Canonical host: redirect www.* to the root domain.
+  if (normalizedHost.startsWith('www.')) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.host = normalizedHost.slice(4);
+    return NextResponse.redirect(redirectUrl, 308);
+  }
+
   const { pathname } = request.nextUrl;
 
   if (pathname === '/') {

@@ -1,4 +1,5 @@
 import type { TranslationDictionary } from '../../../lib/i18n';
+import SupportEmailButton from './SupportEmailButton';
 
 interface ContactSectionProps {
   copy: TranslationDictionary['contactSection'];
@@ -23,12 +24,10 @@ export default function ContactSection({ copy }: ContactSectionProps) {
           </p>
 
           <div className="mt-6">
-            <a
-              href={`mailto:${copy.emailValue}`}
-              className="inline-flex h-10 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              {copy.primaryAction}
-            </a>
+            <SupportEmailButton
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-semibold !text-white transition hover:bg-blue-700 hover:!text-white"
+              label={copy.primaryAction}
+            />
           </div>
         </div>
 

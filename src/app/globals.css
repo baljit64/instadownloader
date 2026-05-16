@@ -40,6 +40,24 @@ a {
   text-decoration: none;
 }
 
+/* Keep primary action text white across all button states. */
+.ant-btn-primary,
+.ant-btn-primary:hover,
+.ant-btn-primary:focus,
+.ant-btn-primary:active,
+.ant-btn-primary:focus-visible,
+.ant-btn-color-primary.ant-btn-variant-solid,
+.ant-btn-color-primary.ant-btn-variant-solid:hover,
+.ant-btn-color-primary.ant-btn-variant-solid:focus,
+.ant-btn-color-primary.ant-btn-variant-solid:active {
+  color: #ffffff !important;
+}
+
+.ant-btn-primary > span,
+.ant-btn-color-primary.ant-btn-variant-solid > span {
+  color: inherit !important;
+}
+
 ::selection {
   background: rgba(37, 99, 235, 0.18);
   color: var(--foreground);
@@ -206,6 +224,7 @@ a {
   border: none !important;
   border-radius: 0.75rem !important;
   background: var(--primary) !important;
+  color: #ffffff !important;
   box-shadow: none;
   font-size: 0.95rem;
   font-weight: 600;
@@ -261,6 +280,7 @@ a {
   border: none !important;
   border-radius: 0.7rem !important;
   background: var(--primary) !important;
+  color: #ffffff !important;
   box-shadow: none;
   font-weight: 600;
 }

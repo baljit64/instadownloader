@@ -1,32 +1,22 @@
 export const siteName = 'Insta Downloader';
 export const siteTitle =
-  'Instagram Downloader (Insta Downloader) | Download Post, Reel, Video and Photo Links';
+  'Instagram Downloader | Download Posts & Reels by Link';
 export const siteDescription =
-  'Insta Downloader for public Instagram links. Download reels, posts, videos, photos, and carousel media by pasting a link. Also known as IG Downloader and InstaDownloader.';
+  'Insta Downloader for public Instagram links. Paste a post or reel URL to download videos, photos, and carousel media quickly.';
 export const siteKeywords = [
   'instagram downloader',
   'insta downloader',
   'ig downloader',
-  'instadownloader',
-  'igdown',
   'instagram post downloader',
   'instagram reel downloader',
   'instagram video downloader',
-  'instagram link downloader',
   'download instagram reel',
   'download instagram post',
   'download instagram post link',
   'download instagram reel link',
-  'save instagram reel',
-  'save instagram video',
   'instagram photo downloader',
-  'instagram image downloader',
   'instagram carousel downloader',
-  'public instagram downloader',
-  'download public instagram post',
-  'save instagram post online',
-  'insta post download',
-  'online instagram downloader',
+  'instagram link downloader',
 ];
 
 function normalizeSiteUrl(value: string): string {

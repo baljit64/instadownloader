@@ -6,6 +6,15 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ hero }: HeroSectionProps) {
+  const downloaderCopy = {
+    buttonDownload: hero.buttonDownload,
+    buttonLoading: hero.buttonLoading,
+    errors: hero.errors,
+    inputPlaceholder: hero.inputPlaceholder,
+    note: hero.note,
+    validations: hero.validations,
+  };
+
   return (
     <section className="px-4 pb-4 pt-12 text-center sm:px-6">
       <div className="mx-auto mb-4 flex max-w-2xl flex-wrap items-center justify-center gap-2">
@@ -27,7 +36,7 @@ export default function HeroSection({ hero }: HeroSectionProps) {
         {hero.subtitle}
       </p>
 
-      <HeroDownloadForm copy={hero} formats={hero.formats} />
+      <HeroDownloadForm copy={downloaderCopy} formats={hero.formats} />
     </section>
   );
 }

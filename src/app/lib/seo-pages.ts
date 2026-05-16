@@ -38,8 +38,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-downloader',
     type: 'tool',
     shortTitle: 'Instagram Downloader',
-    metadataTitle:
-      'Instagram Downloader (Insta Downloader / IG Downloader) for Public Post and Reel Links',
+    metadataTitle: 'Instagram Downloader for Posts & Reels by Link',
     metadataDescription:
       'Insta Downloader for public Instagram links. Download posts, reels, videos, photos, and carousel media online. Also searched as IG Downloader and InstaDownloader.',
     heroEyebrow: 'Instagram tool',
@@ -113,7 +112,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'insta-downloader',
     type: 'tool',
     shortTitle: 'Insta Downloader',
-    metadataTitle: 'Insta Downloader (IG Downloader) for Public Instagram Post and Reel Links',
+    metadataTitle: 'Insta Downloader (IG Downloader) by Link',
     metadataDescription:
       'Insta Downloader for users searching igdown, ig downloader, or instadownloader terms. Paste a public Instagram link and download posts, reels, videos, and photos.',
     heroEyebrow: 'Insta downloader tool',
@@ -180,7 +179,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-video-downloader',
     type: 'tool',
     shortTitle: 'Instagram Video Downloader',
-    metadataTitle: 'Instagram Video Downloader for Public Reels and Video Posts',
+    metadataTitle: 'Instagram Video Downloader for Reels by Link',
     metadataDescription:
       'Download public Instagram videos by link, including reels and video posts. This Instagram video downloader explains the best copy-link, preview, and save workflow.',
     heroEyebrow: 'Instagram video tool',
@@ -247,7 +246,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-post-downloader',
     type: 'tool',
     shortTitle: 'Instagram Post Downloader',
-    metadataTitle: 'Instagram Post Downloader by Link for Public Feed Posts',
+    metadataTitle: 'Instagram Post Downloader by Link',
     metadataDescription:
       'Download Instagram post links from public feed URLs. This Instagram post downloader covers copy-link, preview, and full-quality download flow.',
     heroEyebrow: 'Instagram post tool',
@@ -317,7 +316,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-reel-downloader',
     type: 'tool',
     shortTitle: 'Instagram Reel Downloader',
-    metadataTitle: 'Instagram Reel Downloader by Link for Public Reels',
+    metadataTitle: 'Instagram Reel Downloader by Link',
     metadataDescription:
       'Download Instagram reel links with a reel-focused page. Covers save Instagram reel intent, public URL support, preview handling, and common failures.',
     heroEyebrow: 'Instagram reel tool',
@@ -387,7 +386,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-photo-downloader',
     type: 'tool',
     shortTitle: 'Instagram Photo Downloader',
-    metadataTitle: 'Instagram Photo Downloader for Public Image Posts',
+    metadataTitle: 'Instagram Photo Downloader by Link',
     metadataDescription:
       'Download public Instagram photos in a simple online flow. This page targets image-post search intent and explains quality, public-link support, and previews.',
     heroEyebrow: 'Instagram photo tool',
@@ -454,7 +453,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-carousel-downloader',
     type: 'tool',
     shortTitle: 'Instagram Carousel Downloader',
-    metadataTitle: 'Instagram Carousel Downloader for Multi-Slide Public Posts',
+    metadataTitle: 'Instagram Carousel Downloader by Link',
     metadataDescription:
       'Download public Instagram carousel posts and understand how multi-item posts should be handled. Learn how previews and multi-media results work.',
     heroEyebrow: 'Instagram carousel tool',
@@ -519,7 +518,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'how-to-download-instagram-post',
     type: 'guide',
     shortTitle: 'How to Download an Instagram Post',
-    metadataTitle: 'How to Download an Instagram Post from a Public URL',
+    metadataTitle: 'How to Download an Instagram Post by Link',
     metadataDescription:
       'Learn how to download an Instagram post from a public URL. Step-by-step guidance for copy, paste, preview, and download.',
     heroEyebrow: 'Instagram guide',
@@ -584,7 +583,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'instagram-download-not-working',
     type: 'guide',
     shortTitle: 'Instagram Download Not Working',
-    metadataTitle: 'Instagram Download Not Working? Common Public-Link Fixes',
+    metadataTitle: 'Instagram Downloader Not Working? Fixes',
     metadataDescription:
       'Troubleshoot Instagram download issues for public links. Learn why a public-looking URL may fail and what users should check first.',
     heroEyebrow: 'Instagram troubleshooting',
@@ -649,7 +648,7 @@ export const seoPages: SeoPageConfig[] = [
     slug: 'public-vs-private-instagram-links',
     type: 'guide',
     shortTitle: 'Public vs Private Instagram Links',
-    metadataTitle: 'Public vs Private Instagram Links: What a Downloader Can Actually Use',
+    metadataTitle: 'Public vs Private Instagram Links Guide',
     metadataDescription:
       'Understand the difference between public and private Instagram links for download tools. Learn what a downloader can realistically support.',
     heroEyebrow: 'Instagram support guide',
@@ -722,7 +721,9 @@ export function getSeoPage(slug: string): SeoPageConfig | null {
 
 export function buildSeoPageMetadata(page: SeoPageConfig): Metadata {
   return {
-    title: page.metadataTitle,
+    title: {
+      absolute: page.metadataTitle,
+    },
     description: page.metadataDescription,
     keywords: page.keywords,
     alternates: {

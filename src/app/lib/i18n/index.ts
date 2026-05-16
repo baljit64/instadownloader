@@ -110,8 +110,8 @@ export function detectPreferredLocale(acceptLanguage: string | null): Locale {
 const englishDictionary = {
   metadata: {
     homeDescription:
-      'Insta Downloader for public Instagram links. Download posts, reels, videos, photos, and carousel media online by link. Also supports public URLs from YouTube, TikTok, Facebook, X, and Pinterest.',
-    homeTitle: 'Instagram Downloader (Insta Downloader) for Public Post and Reel Links',
+      'Insta Downloader for public Instagram links. Paste a post or reel URL to download videos, photos, and carousel media quickly.',
+    homeTitle: 'Instagram Downloader for Posts & Reels',
     proxyStatsDescription: 'Daily Webshare proxy usage for the downloader backend.',
     proxyStatsTitle: 'Proxy Stats',
   },
@@ -148,9 +148,9 @@ const englishDictionary = {
       unsupportedTitle: 'AI assistant needs a supported platform',
     },
     aiSignals: [
-      'AI URL reading',
-      'Adaptive extractor routing',
-      'Preview-first workflow',
+      'Instagram post downloader',
+      'Instagram reel downloader',
+      'Insta downloader by link',
     ],
     buttonDownload: 'Download',
     buttonLoading: 'Downloading...',
@@ -161,10 +161,10 @@ const englishDictionary = {
     formats: ['Post', 'Reel', 'IGTV', 'Carousel'],
     inputPlaceholder: 'Paste link here!',
     moreOptions: 'More options',
-    note: 'Use it. It is easy, fast and secure.',
+    note: 'Fast Insta Downloader for public post and reel links.',
     subtitle:
-      'Paste an Instagram post, reel, video, or photo link to preview and download.',
-    title: 'Instagram Downloader: Paste a post or reel URL',
+      'Use this Instagram downloader to download Instagram post, reel, video, or photo links in one step.',
+    title: 'Instagram Downloader by Link: Post, Reel, Photo',
     validations: {
       required: 'Paste a supported public media URL first.',
       unsupported:
@@ -174,42 +174,42 @@ const englishDictionary = {
   benefits: [
     {
       description:
-        'Paste a public Instagram link, fetch the media, and keep the whole flow straightforward from input to download.',
-      title: 'Easy Peasy',
+        'Paste a public URL to download Instagram post links with a simple copy, paste, preview, and save flow.',
+      title: 'Instagram Post Downloader',
     },
     {
       description:
-        'The downloader is tuned for quick extraction, proxy-backed fetches, and immediate preview cards after a valid URL.',
-      title: 'Super Fast',
+        'Download Instagram reel links quickly with proxy-backed extraction and instant preview cards before saving.',
+      title: 'Instagram Reel Downloader',
     },
     {
       description:
-        'Requests stay on the server, keeping the Instagram scraping logic and Webshare proxy credentials off the client.',
-      title: 'Well Secure',
+        'This Insta Downloader runs extraction on the server, keeping sensitive fetch logic and proxy credentials off the browser.',
+      title: 'Secure Link Downloader',
     },
   ],
   aiExperience: {
     cards: [
       {
         description:
-          'The interface reacts to the pasted link, surfaces platform-aware cues, and helps the user feel guided before the request is sent.',
-        title: 'Smart URL understanding',
+          'The downloader checks each pasted link and prepares a clear next step before download starts.',
+        title: 'Smart link understanding',
       },
       {
         description:
-          'Instagram links lean into the native extractor path while the other supported providers flow through the universal resolver.',
-        title: 'Adaptive routing hints',
+          'Instagram post and reel links are handled with a focused flow, while other supported links follow the standard path.',
+        title: 'Clean link routing',
       },
       {
         description:
-          'Users get clearer expectations, better helper text, and a more intentional path from paste to download.',
-        title: 'Guided confidence',
+          'Users get clear helper text from paste to preview, then download with fewer failed attempts.',
+        title: 'Guided download flow',
       },
     ],
     description:
-      'The site now behaves more like a download copilot: it reads the link, signals the extraction path, and adds a smarter visual rhythm before the media cards appear.',
-    eyebrow: 'AI Experience Layer',
-    title: 'More assistant. Less plain downloader.',
+      'This Instagram downloader keeps the flow simple: paste a link, preview media, and download the file.',
+    eyebrow: 'Download experience',
+    title: 'Clear steps for post and reel downloads',
   },
   spotlight: [
     {
@@ -269,7 +269,7 @@ const englishDictionary = {
     liveNow: 'Live now',
     openProxyStats: 'Open proxy stats',
     sectionDescription:
-      'Instagram is the strongest integration right now, while the other providers are available in beta through the shared extractor flow.',
+      'Instagram post, reel, and photo downloads are the main focus. Other platforms are available in beta with best-effort support.',
     title: 'Website support snapshot',
   },
   aboutSection: {

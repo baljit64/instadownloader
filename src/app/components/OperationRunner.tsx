@@ -164,7 +164,7 @@ export default function OperationRunner({
         <button
           type="submit"
           disabled={isSubmitting || authLoading || !user}
-          className="w-full rounded-xl bg-accent text-paper py-3 font-semibold disabled:opacity-50"
+          className="w-full rounded-xl bg-accent text-white py-3 font-semibold disabled:opacity-50"
         >
           {isSubmitting ? 'Processing...' : 'Run'}
         </button>
@@ -175,7 +175,12 @@ export default function OperationRunner({
         <div className="text-sm text-slate-600">{processProgress}</div>
         {job && <div className="text-sm">Status: {job.status}</div>}
         {jobUrl ? (
-          <a href={jobUrl} className="block text-accent underline" target="_blank" rel="noreferrer">
+          <a
+            href={jobUrl}
+            className="block text-accent underline"
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+          >
             Download result
           </a>
         ) : null}

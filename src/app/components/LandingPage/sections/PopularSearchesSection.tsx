@@ -30,6 +30,7 @@ export default function PopularSearchesSection({ links }: PopularSearchesSection
           <Link
             key={link.label}
             href={link.href}
+            prefetch={false}
             className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
           >
             {link.label}

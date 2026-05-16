@@ -88,7 +88,7 @@ export default function InstagramDownloaderTool() {
             type="primary"
             htmlType="submit"
             loading={isLoading}
-            className="h-11 bg-[#e5322d] px-6 hover:!bg-[#cc2723]"
+            className="h-11 bg-[#e5322d] px-6 !text-white hover:!bg-[#cc2723] hover:!text-white"
           >
             Download
           </Button>

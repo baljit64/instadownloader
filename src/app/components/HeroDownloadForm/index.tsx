@@ -7,15 +7,29 @@ import {
   normalizeSupportedMediaUrl,
   type MediaItem,
 } from '../../lib/media';
-import type { TranslationDictionary } from '../../lib/i18n';
 import IconGlyph from '../IconGlyph';
 
 const InstagramMediaPreviewGrid = lazy(() => import('../InstagramMediaPreviewGrid'));
 
 type DownloaderStatus = 'idle' | 'loading' | 'success' | 'error';
 
+export interface HeroDownloadFormCopy {
+  buttonDownload: string;
+  buttonLoading: string;
+  errors: {
+    fetchFailure: string;
+    noMediaFound: string;
+  };
+  inputPlaceholder: string;
+  note: string;
+  validations: {
+    required: string;
+    unsupported: string;
+  };
+}
+
 interface HeroDownloadFormProps {
-  copy: TranslationDictionary['hero'];
+  copy: HeroDownloadFormCopy;
   formats: string[];
 }
 

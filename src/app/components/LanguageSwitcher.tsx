@@ -48,9 +48,10 @@ export default function LanguageSwitcher({
               <Link
                 key={locale}
                 href={href}
+                prefetch={false}
                 className={`rounded-md px-3 py-2 text-sm font-medium transition ${
                   isActive
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-blue-600 !text-white hover:!text-white'
                     : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
                 }`}
               >

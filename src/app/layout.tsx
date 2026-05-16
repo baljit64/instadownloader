@@ -3,6 +3,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { headers } from 'next/headers';
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
+import Script from 'next/script';
 import PwaClient from './components/PwaClient';
 import './globals.css';
 import { defaultLocale, isSupportedLocale, localeInfo } from './lib/i18n';
@@ -26,6 +27,11 @@ const displayFont = Space_Grotesk({
 });
 
 const siteUrl = getSiteUrl();
+const gaId =
+  process.env.NEXT_PUBLIC_GA_ID ??
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ??
+  '';
+const enableVercelTelemetry = process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === 'true';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -155,9 +161,25 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         {children}
+        {gaId ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        ) : null}
         <PwaClient />
-        <Analytics />
-        <SpeedInsights />
+        {enableVercelTelemetry ? <Analytics /> : null}
+        {enableVercelTelemetry ? <SpeedInsights /> : null}
       </body>
     </html>
   );

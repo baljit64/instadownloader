@@ -32,6 +32,7 @@ export default function SeoResourcesSection({
           <Link
             key={page.slug}
             href={`/${page.slug}`}
+            prefetch={false}
             className="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-blue-300 hover:shadow-sm"
           >
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">

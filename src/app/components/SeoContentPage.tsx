@@ -73,7 +73,7 @@ export default function SeoContentPage({
 
       <section className="surface-card rounded-[40px] px-6 py-10 sm:px-10 lg:px-12">
         <nav className="text-sm text-[#726a92]">
-          <Link href="/en" className="font-medium text-[#2d7cff]">
+          <Link href="/en" prefetch={false} className="font-medium text-[#2d7cff]">
             Home
           </Link>
           <span className="mx-2">/</span>
@@ -95,12 +95,14 @@ export default function SeoContentPage({
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href="/en"
+            prefetch={false}
             className="inline-flex h-11 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#7a66f2,#8c71ff)] px-6 text-sm font-semibold text-white shadow-[0_18px_30px_rgba(122,102,242,0.22)] transition hover:brightness-105"
           >
             Open downloader
           </Link>
           <Link
             href="/instagram-downloader"
+            prefetch={false}
             className="inline-flex h-11 items-center justify-center rounded-xl border border-[rgba(130,113,255,0.18)] bg-white/82 px-5 text-sm font-semibold text-[#171923] transition hover:border-[#2d7cff] hover:text-[#2d7cff]"
           >
             Main Instagram page
@@ -193,6 +195,7 @@ export default function SeoContentPage({
             <Link
               key={relatedPage.slug}
               href={`/${relatedPage.slug}`}
+              prefetch={false}
               className="rounded-[28px] border border-white/80 bg-white/82 px-5 py-6 shadow-[0_18px_40px_rgba(118,99,255,0.08)] transition hover:-translate-y-0.5 hover:border-[#cfc5ff]"
             >
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#7b74a3]">

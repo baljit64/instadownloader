@@ -113,12 +113,8 @@ export function getLandingPageContent(
       ? [
           'instagram-downloader',
           'insta-downloader',
-          'instagram-video-downloader',
           'instagram-post-downloader',
           'instagram-reel-downloader',
-          'instagram-photo-downloader',
-          'instagram-carousel-downloader',
-          'instagram-download-not-working',
         ]
           .map((slug) => seoPageMap[slug])
           .filter((page): page is SeoPageConfig => Boolean(page))
@@ -128,9 +124,7 @@ export function getLandingPageContent(
     locale === 'en'
       ? [
           seoPageMap['instagram-downloader']?.faqs[0],
-          seoPageMap['instagram-carousel-downloader']?.faqs[0],
           seoPageMap['instagram-reel-downloader']?.faqs[0],
-          seoPageMap['public-vs-private-instagram-links']?.faqs[0],
         ].filter((faq): faq is SeoFaq => Boolean(faq))
       : [];
 
@@ -183,8 +177,6 @@ export function getLandingPageContent(
       ? [
           { href: '/instagram-downloader', label: 'Instagram Downloader' },
           { href: '/insta-downloader', label: 'Insta Downloader' },
-          { href: '/instagram-video-downloader', label: 'Instagram Video Downloader' },
-          { href: '/instagram-photo-downloader', label: 'Instagram Photo Downloader' },
           { href: '/instagram-reel-downloader', label: 'Instagram Reel Downloader' },
         ]
       : [
