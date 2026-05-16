@@ -4,7 +4,7 @@ import { headers } from 'next/headers';
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
 import Script from 'next/script';
-import PwaClient from './components/PwaClient';
+import LazyPwaClient from './components/LazyPwaClient';
 import './globals.css';
 import { defaultLocale, isSupportedLocale, localeInfo } from './lib/i18n';
 import {
@@ -177,7 +177,7 @@ export default async function RootLayout({
             </Script>
           </>
         ) : null}
-        <PwaClient />
+        <LazyPwaClient />
         {enableVercelTelemetry ? <Analytics /> : null}
         {enableVercelTelemetry ? <SpeedInsights /> : null}
       </body>

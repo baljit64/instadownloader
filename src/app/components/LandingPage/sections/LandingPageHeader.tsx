@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getLocalePath, type Locale } from '../../../lib/i18n';
 import IconGlyph from '../../IconGlyph';
-import LanguageSwitcher from '../../LanguageSwitcher';
+import LazyLanguageSwitcher from '../../LazyLanguageSwitcher';
 import type { LandingPageLink } from '../content';
 
 interface LandingPageHeaderProps {
@@ -42,7 +42,7 @@ export default function LandingPageHeader({
           ))}
         </nav>
 
-        <LanguageSwitcher
+        <LazyLanguageSwitcher
           buttonLabel={languageMenuLabel}
           currentLocale={locale}
         />
