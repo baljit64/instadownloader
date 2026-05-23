@@ -1,11 +1,5 @@
-'use client';
-
-import dynamic from 'next/dynamic';
-
-const DeferredPwaClient = dynamic(() => import('./PwaClient'), {
-  ssr: false,
-});
+import PwaClient from './PwaClient';
 
 export default function LazyPwaClient() {
-  return <DeferredPwaClient />;
+  return <PwaClient />;
 }
