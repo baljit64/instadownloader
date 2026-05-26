@@ -1,9 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import sitemap from '../../sitemap';
-import { activeSeoPages, buildSeoPageMetadata, seoPageMap, seoPages } from '../seo-pages';
+import { locales } from '../i18n';
+import { absoluteUrl } from '../site';
+import {
+  DEFAULT_REVIEW_DATE,
+  activeSeoPages,
+  buildSeoPageMetadata,
+  seoPageMap,
+  seoPages,
+} from '../seo-pages';
 
 function uniqueCount(values: string[]): number {
   return new Set(values).size;
+}
+
+function toIsoDate(value: string): string {
+  return new Date(`${value}T00:00:00.000Z`).toISOString();
 }
 
 describe('seo page governance', () => {
@@ -47,6 +59,15 @@ describe('seo page governance', () => {
       expect(metadata.robots?.follow).toBe(expectedIndexable);
       expect(metadata.robots?.googleBot?.index).toBe(expectedIndexable);
       expect(metadata.robots?.googleBot?.follow).toBe(expectedIndexable);
+      expect(metadata.openGraph?.url).toBe(absoluteUrl(page.canonicalTarget));
+
+      if (page.type === 'guide') {
+        expect(metadata.openGraph?.type).toBe('article');
+        expect(metadata.openGraph?.publishedTime).toBe(toIsoDate(page.lastReviewedAt));
+        expect(metadata.openGraph?.modifiedTime).toBe(toIsoDate(page.lastReviewedAt));
+      } else {
+        expect(metadata.openGraph?.type).toBe('website');
+      }
     }
   });
 
@@ -70,6 +91,32 @@ describe('seo page governance', () => {
 
     for (const page of seoPages.filter((item) => item.status === 'pruned')) {
       expect(sitemapPaths.has(`/${page.slug}`), page.slug).toBe(false);
+    }
+  });
+
+  it('publishes consistent lastModified values in sitemap', () => {
+    const entries = sitemap();
+    const entriesByPath = new Map(
+      entries.map((entry) => [new URL(entry.url).pathname, entry])
+    );
+    const defaultLastModified = new Date(
+      `${DEFAULT_REVIEW_DATE}T00:00:00.000Z`
+    ).toISOString();
+
+    for (const locale of locales) {
+      const localeEntry = entriesByPath.get(`/${locale}`);
+      expect(localeEntry).toBeDefined();
+      expect(localeEntry?.lastModified).toBeInstanceOf(Date);
+      expect((localeEntry?.lastModified as Date).toISOString()).toBe(defaultLastModified);
+    }
+
+    for (const page of activeSeoPages) {
+      const seoEntry = entriesByPath.get(`/${page.slug}`);
+      expect(seoEntry).toBeDefined();
+      expect(seoEntry?.lastModified).toBeInstanceOf(Date);
+      expect((seoEntry?.lastModified as Date).toISOString()).toBe(
+        toIsoDate(page.lastReviewedAt)
+      );
     }
   });
 });

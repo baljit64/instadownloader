@@ -1,8 +1,27 @@
 import Link from 'next/link';
 import type { SeoPageConfig } from '../lib/seo-pages';
-import { absoluteUrl } from '../lib/site';
+import { absoluteUrl, siteName } from '../lib/site';
+
+function getReviewDateIso(value: string): string {
+  return new Date(`${value}T00:00:00.000Z`).toISOString();
+}
+
+function formatReviewDate(value: string): string {
+  return new Intl.DateTimeFormat('en-US', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${value}T00:00:00.000Z`));
+}
 
 function buildStructuredData(page: SeoPageConfig) {
+  const pageUrl = absoluteUrl(`/${page.slug}`);
+  const pageId = `${pageUrl}#webpage`;
+  const articleId = `${pageUrl}#article`;
+  const organizationId = `${absoluteUrl('/')}#organization`;
+  const websiteId = `${absoluteUrl('/')}#website`;
+  const reviewedAtIso = getReviewDateIso(page.lastReviewedAt);
   const faqEntities = page.faqs.map((faq) => ({
     '@type': 'Question',
     name: faq.question,
@@ -16,11 +35,16 @@ function buildStructuredData(page: SeoPageConfig) {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@id': pageId,
         '@type': 'WebPage',
         name: page.metadataTitle,
         description: page.metadataDescription,
-        url: absoluteUrl(`/${page.slug}`),
+        url: pageUrl,
         inLanguage: 'en',
+        dateModified: reviewedAtIso,
+        isPartOf: {
+          '@id': websiteId,
+        },
       },
       {
         '@type': 'BreadcrumbList',
@@ -35,9 +59,33 @@ function buildStructuredData(page: SeoPageConfig) {
             '@type': 'ListItem',
             position: 2,
             name: page.shortTitle,
-            item: absoluteUrl(`/${page.slug}`),
+            item: pageUrl,
           },
         ],
+      },
+      {
+        '@id': articleId,
+        '@type': 'Article',
+        headline: page.heroTitle,
+        name: page.metadataTitle,
+        description: page.metadataDescription,
+        url: pageUrl,
+        inLanguage: 'en',
+        datePublished: reviewedAtIso,
+        dateModified: reviewedAtIso,
+        keywords: page.keywords.join(', '),
+        mainEntityOfPage: {
+          '@id': pageId,
+        },
+        author: {
+          '@type': 'Organization',
+          name: siteName,
+          url: absoluteUrl('/en'),
+        },
+        publisher: {
+          '@id': organizationId,
+        },
+        image: absoluteUrl('/opengraph-image'),
       },
       ...(faqEntities.length
         ? [
@@ -60,6 +108,7 @@ export default function SeoContentPage({
   relatedPages: SeoPageConfig[];
 }) {
   const structuredData = buildStructuredData(page);
+  const reviewedLabel = formatReviewDate(page.lastReviewedAt);
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
@@ -81,6 +130,9 @@ export default function SeoContentPage({
           <span className="text-xs font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
             {page.heroEyebrow}
           </span>
+          <p className="mt-3 text-xs font-medium uppercase tracking-[0.2em] text-[#7a7398]">
+            Last updated: {reviewedLabel}
+          </p>
           <h1 className="font-display mt-4 text-4xl font-bold tracking-[-0.05em] text-[#171923] sm:text-[3.6rem]">
             {page.heroTitle}
           </h1>

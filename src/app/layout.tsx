@@ -6,7 +6,11 @@ import { Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
 import Script from 'next/script';
 import LazyPwaClient from './components/LazyPwaClient';
 import './globals.css';
-import { defaultLocale, isSupportedLocale, localeInfo } from './lib/i18n';
+import {
+  defaultLocale,
+  isSupportedLocale,
+  localeInfo,
+} from './lib/i18n';
 import {
   absoluteUrl,
   getOpenGraphImages,
@@ -36,6 +40,12 @@ const gaId =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ??
   '';
 const enableVercelTelemetry = process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === 'true';
+const googleSiteVerification =
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? undefined;
+const bingSiteVerification =
+  process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION ?? undefined;
+const yandexSiteVerification =
+  process.env.NEXT_PUBLIC_YANDEX_SITE_VERIFICATION ?? undefined;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -95,6 +105,11 @@ export const metadata: Metadata = {
       'max-video-preview': -1,
     },
   },
+  verification: {
+    google: googleSiteVerification,
+    yandex: yandexSiteVerification,
+    other: bingSiteVerification ? { 'msvalidate.01': bingSiteVerification } : undefined,
+  },
   openGraph: {
     type: 'website',
     url: absoluteUrl('/en'),
@@ -151,11 +166,6 @@ export default async function RootLayout({
         url: homeUrl,
         description: siteDescription,
         inLanguage: 'en',
-        potentialAction: {
-          '@type': 'SearchAction',
-          target: `${homeUrl}?q={search_term_string}`,
-          'query-input': 'required name=search_term_string',
-        },
       },
       {
         '@type': 'WebPage',

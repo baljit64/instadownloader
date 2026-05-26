@@ -1,6 +1,6 @@
 import type { IconGlyphName } from '../IconGlyph';
 import { getLocalePath, type Locale, type TranslationDictionary } from '../../lib/i18n';
-import { seoPageMap, type SeoFaq, type SeoPageConfig } from '../../lib/seo-pages';
+import { activeSeoPages, seoPageMap, type SeoFaq, type SeoPageConfig } from '../../lib/seo-pages';
 import {
   absoluteUrl,
   siteAlternateNames,
@@ -67,6 +67,7 @@ export interface LandingPageContent {
   homeStructuredData: Record<string, unknown> | null;
   homepageFaqs: SeoFaq[];
   navigation: LandingPageLink[];
+  allSeoPageLinks: LandingPageLink[];
   popularSearchLinks: LandingPageLink[];
   spotlightSections: SpotlightItem[];
   websiteTiles: WebsiteTile[];
@@ -242,8 +243,20 @@ export function getLandingPageContent(
         ]
       : [];
 
+  const allSeoPageLinks: LandingPageLink[] =
+    locale === 'en'
+      ? activeSeoPages
+          .slice()
+          .sort((a, b) => a.shortTitle.localeCompare(b.shortTitle))
+          .map((page) => ({
+            href: `/${page.slug}`,
+            label: page.shortTitle,
+          }))
+      : [];
+
   return {
     aboutCards,
+    allSeoPageLinks,
     aiExperienceCards,
     benefits,
     featuredSeoPages,

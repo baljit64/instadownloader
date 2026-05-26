@@ -1,14 +1,17 @@
 import Link from 'next/link';
 import type { SeoPageConfig } from '../../../lib/seo-pages';
+import type { LandingPageLink } from '../content';
 
 interface SeoResourcesSectionProps {
+  allSeoPageLinks: LandingPageLink[];
   featuredSeoPages: SeoPageConfig[];
 }
 
 export default function SeoResourcesSection({
+  allSeoPageLinks,
   featuredSeoPages,
 }: SeoResourcesSectionProps) {
-  if (!featuredSeoPages.length) {
+  if (!featuredSeoPages.length && !allSeoPageLinks.length) {
     return null;
   }
 
@@ -45,6 +48,29 @@ export default function SeoResourcesSection({
           </Link>
         ))}
       </div>
+
+      {allSeoPageLinks.length ? (
+        <div className="mt-8">
+          <h3 className="font-display text-base font-semibold text-slate-900">
+            Full SEO page hub
+          </h3>
+          <p className="mt-1 text-sm leading-6 text-slate-600">
+            Crawlable links to all active intent pages in the current rollout.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            {allSeoPageLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                prefetch={false}
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

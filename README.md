@@ -73,3 +73,9 @@ Optional:
 
 - `PROXY_STATS_ACCESS_TOKEN` restricts access to `/{locale}/proxy-stats`. Supply the
   token via `?token=...`, `x-proxy-stats-token`, or `proxy_stats_token` cookie.
+
+## SEO Verification Tokens
+
+- `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` adds `google-site-verification` metadata.
+- `NEXT_PUBLIC_BING_SITE_VERIFICATION` adds `msvalidate.01` metadata for Bing.
+- `NEXT_PUBLIC_YANDEX_SITE_VERIFICATION` adds `yandex-verification` metadata.

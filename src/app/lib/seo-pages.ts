@@ -40,7 +40,7 @@ export interface SeoPageConfig {
   type: 'guide' | 'tool';
 }
 
-const DEFAULT_REVIEW_DATE = '2026-05-16';
+export const DEFAULT_REVIEW_DATE = '2026-05-16';
 
 function createSeoPage(
   page: Omit<SeoPageConfig, 'canonicalTarget' | 'lastReviewedAt' | 'status'> & {
@@ -1768,14 +1768,42 @@ export function getSeoPage(slug: string): SeoPageConfig | null {
   return seoPageMap[slug] ?? null;
 }
 
+function toIsoDate(value: string): string {
+  return new Date(`${value}T00:00:00.000Z`).toISOString();
+}
+
 export function buildSeoPageMetadata(page: SeoPageConfig): Metadata {
   const indexable = page.status === 'active';
+  const reviewedAtIso = toIsoDate(page.lastReviewedAt);
+  const openGraphBase = {
+    siteName,
+    title: page.metadataTitle,
+    description: page.metadataDescription,
+    url: absoluteUrl(page.canonicalTarget),
+    images: getOpenGraphImages(),
+  };
+  const openGraph =
+    page.type === 'guide'
+      ? {
+          ...openGraphBase,
+          type: 'article' as const,
+          publishedTime: reviewedAtIso,
+          modifiedTime: reviewedAtIso,
+          authors: [absoluteUrl('/en')],
+          section: page.intentCluster,
+          tags: page.keywords,
+        }
+      : {
+          ...openGraphBase,
+          type: 'website' as const,
+        };
 
   return {
     title: {
       absolute: page.metadataTitle,
     },
     description: page.metadataDescription,
+    category: page.intentCluster,
     keywords: page.keywords,
     alternates: {
       canonical: page.canonicalTarget,
@@ -1791,14 +1819,7 @@ export function buildSeoPageMetadata(page: SeoPageConfig): Metadata {
         'max-video-preview': -1,
       },
     },
-    openGraph: {
-      type: page.type === 'guide' ? 'article' : 'website',
-      siteName,
-      title: page.metadataTitle,
-      description: page.metadataDescription,
-      url: absoluteUrl(page.canonicalTarget),
-      images: getOpenGraphImages(),
-    },
+    openGraph,
     twitter: {
       card: 'summary_large_image',
       title: page.metadataTitle,

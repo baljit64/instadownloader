@@ -50,7 +50,10 @@ export default async function LandingPage({ dictionary, locale }: LandingPagePro
           aboutCards={content.aboutCards}
           copy={dictionary.aboutSection}
         />
-        <SeoResourcesSection featuredSeoPages={content.featuredSeoPages} />
+        <SeoResourcesSection
+          allSeoPageLinks={content.allSeoPageLinks}
+          featuredSeoPages={content.featuredSeoPages}
+        />
         <FaqSection homepageFaqs={content.homepageFaqs} />
         <ContactSection copy={dictionary.contactSection} />
         <LandingPageFooter
