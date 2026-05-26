@@ -12,6 +12,12 @@ const ALLOWED_HOSTS =
 
 const TIMEOUT_MS = 30_000;
 const RATE_LIMIT_OVERRIDES = { limit: 120, windowMs: 60_000 };
+const RETRYABLE_UPSTREAM_STATUSES = [407, 429, 500, 502, 503, 504];
+
+function mapUpstreamStatus(status: number): number {
+  // Browsers treat 407 specially and surface net::ERR_UNEXPECTED_PROXY_AUTH for fetch/XHR.
+  return status === 407 ? 502 : status;
+}
 
 export async function GET(request: NextRequest) {
   const requestId = getRequestId(request);
@@ -90,32 +96,53 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { response: upstream } = await proxyRequest<Readable>(
-      {
-        url: mediaUrl,
-        method: 'GET',
-        responseType: 'stream',
-        timeout: TIMEOUT_MS,
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-          Referer: 'https://www.instagram.com/',
-        },
-        validateStatus: () => true,
-        maxRedirects: 5,
+    const requestConfig = {
+      url: mediaUrl,
+      method: 'GET' as const,
+      responseType: 'stream' as const,
+      timeout: TIMEOUT_MS,
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        Referer: 'https://www.instagram.com/',
       },
-      {
-        requestId,
-        name: 'instagram.download',
-        rotateOnRetry: true,
+      validateStatus: () => true,
+      maxRedirects: 5,
+    };
+
+    let { response: upstream } = await proxyRequest<Readable>(requestConfig, {
+      requestId,
+      name: 'instagram.download',
+      rotateOnRetry: true,
+      retryStatuses: RETRYABLE_UPSTREAM_STATUSES,
+    });
+
+    if (upstream.status === 407) {
+      logger.warn('upstream.proxy_auth_failed', {
+        status: upstream.status,
+        fallback: 'direct',
+      });
+
+      if (typeof upstream.data?.destroy === 'function') {
+        upstream.data.destroy();
       }
-    );
+
+      const directAttempt = await proxyRequest<Readable>(requestConfig, {
+        requestId,
+        name: 'instagram.download.direct_fallback',
+        useProxy: false,
+        attempts: 1,
+      });
+
+      upstream = directAttempt.response;
+    }
 
     if (upstream.status >= 400) {
       if (typeof upstream.data?.destroy === 'function') {
         upstream.data.destroy();
       }
-      return respondJson({ error: 'Failed to fetch media.' }, { status: upstream.status });
+      const status = mapUpstreamStatus(upstream.status);
+      return respondJson({ error: 'Failed to fetch media.' }, { status });
     }
 
     const contentType =

@@ -95,7 +95,8 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
         source,
       });
     } catch {
-      triggerBrowserDownload(downloadUrl, filename);
+      const fallbackUrl = item.url;
+      triggerBrowserDownload(fallbackUrl, filename);
       trackAnalyticsEvent('media_download_fallback', {
         media_type: item.type,
         provider,
