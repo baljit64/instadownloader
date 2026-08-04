@@ -13,7 +13,7 @@ Use Google’s field thresholds at the 75th percentile, split by mobile and desk
 - Google Analytics is not fetched before consent.
 - Vercel Analytics and Speed Insights are opt-in by environment variable.
 - A system font stack avoids external font requests and build-time font downloads.
-- Static localized, SEO, trust, and capability pages minimize per-request rendering work.
+- Server-rendered localized, SEO, trust, and capability pages deliver complete HTML; the locale-aware root currently opts routes into request-time rendering.
 - The sitemap, robots, OG images, and manifest use native metadata routes.
 
 ## Risks
@@ -26,6 +26,8 @@ Use Google’s field thresholds at the 75th percentile, split by mobile and desk
 | Service worker/PWA client | Client work | Verify registration timing and remove if offline value is not used |
 | Remote extraction previews | Network variability | Reserve preview dimensions and lazy-load below result state |
 | Third-party media/proxy latency | Download completion, not initial LCP | Track extraction and file-transfer timings separately from page CWV |
+| Locale headers make the root layout dynamic | Request-time rendering/TTFB | Measure production TTFB; consider multiple root layouts or cache strategy only with a tested locale-safe design |
+| Turbopack build stalls while tracing this dependency graph | CI reliability | `npm run build` uses the verified Webpack compiler; re-evaluate Turbopack after dependency/tooling changes |
 
 ## Measurement plan
 

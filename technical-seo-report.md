@@ -2,7 +2,7 @@
 
 ## Architecture
 
-IGDown uses Next.js App Router server components for public pages. `/` redirects by `Accept-Language` to one of `/en`, `/hi`, `/es`, or `/fr`; static locale parameters pre-render those four routes. English feature and guide routes are static files backed by a typed content registry. Interactive downloader code is isolated in a client component.
+IGDown uses Next.js App Router server components for public pages. `/` redirects by `Accept-Language` to one of `/en`, `/hi`, `/es`, or `/fr`. The root layout reads locale request headers so public pages are server-rendered on demand with the correct document language and direction; their route source and content registries remain deterministic. Interactive downloader code is isolated in a client component.
 
 ## Metadata
 
@@ -56,4 +56,3 @@ Primary content and internal links render on the server. The downloader form req
 - Confirm `X-Robots-Tag` is not injected by hosting on public pages.
 - Configure Google/Bing verification environment variables as documented in the root layout.
 - Verify URL response headers after every proxy/redirect change.
-

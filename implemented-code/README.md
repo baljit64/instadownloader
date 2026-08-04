@@ -30,5 +30,6 @@ npm run build
 npm audit
 ```
 
-Post-deploy checks requiring a production URL are listed in the audit and schema/performance reports.
+The build script uses Next.js Webpack because Turbopack repeatedly stalled during compilation of this repository, while Webpack compiled and generated all routes successfully.
 
+Post-deploy checks requiring a production URL are listed in the audit and schema/performance reports.
