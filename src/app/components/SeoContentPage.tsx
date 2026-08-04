@@ -198,12 +198,15 @@ export default function SeoContentPage({
       <section className="surface-card mt-10 rounded-[38px] px-6 py-10 sm:px-8">
         <div className="max-w-3xl">
           <span className="text-xs font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
-            Why this page exists
+            At a glance
           </span>
           <h2 className="font-display mt-4 text-3xl font-bold tracking-[-0.04em] text-[#171923] sm:text-[2.7rem]">
-            Match the search intent with clearer content
+            What this {page.type === 'guide' ? 'guide' : 'tool'} covers
           </h2>
-          <p className="mt-5 text-base leading-8 text-[#726a92]">{page.description}</p>
+          <p className="mt-5 text-base leading-8 text-[#726a92]">
+            {page.shortTitle} explains the supported public-link workflow, the checks to
+            make before downloading, and the limitations that can affect a result.
+          </p>
         </div>
       </section>
 

@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import sitemap from '../../sitemap';
 import { locales } from '../i18n';
-import { absoluteUrl } from '../site';
+import { absoluteUrl, siteKeywords } from '../site';
+import { seoPageDetails } from '../seo-page-details';
+import { buildTrustMetadata, trustPages } from '../trust-pages';
 import {
   DEFAULT_REVIEW_DATE,
   activeSeoPages,
@@ -134,5 +136,49 @@ describe('seo page governance', () => {
         toIsoDate(page.lastReviewedAt)
       );
     }
+  });
+
+  it('publishes trust pages and excludes unsupported capability notices', () => {
+    const sitemapPaths = new Set(
+      sitemap().map((entry) => new URL(entry.url).pathname)
+    );
+
+    for (const page of Object.values(trustPages)) {
+      expect(sitemapPaths.has(`/${page.slug}`), page.slug).toBe(true);
+    }
+
+    expect(sitemapPaths.has('/story-downloader')).toBe(false);
+    expect(sitemapPaths.has('/profile-picture-downloader')).toBe(false);
+  });
+
+  it('keeps trust metadata unique and canonical', () => {
+    const pages = Object.values(trustPages);
+    const descriptions = pages.map((page) => page.description);
+    const titles = pages.map((page) => page.title);
+
+    expect(uniqueCount(descriptions)).toBe(pages.length);
+    expect(uniqueCount(titles)).toBe(pages.length);
+
+    for (const page of pages) {
+      const metadata = buildTrustMetadata(page);
+      expect(metadata.alternates?.canonical).toBe(`/${page.slug}`);
+    }
+  });
+
+  it('adds substantive details to core tools without advertising unsupported features', () => {
+    const coreToolSlugs = [
+      'instagram-post-downloader',
+      'instagram-video-downloader',
+      'instagram-reel-downloader',
+      'instagram-photo-downloader',
+      'instagram-carousel-downloader',
+    ];
+
+    for (const slug of coreToolSlugs) {
+      expect(seoPageDetails[slug]?.length, slug).toBeGreaterThanOrEqual(3);
+    }
+
+    expect(siteKeywords).not.toContain('instagram story downloader');
+    expect(siteKeywords).not.toContain('download instagram story');
   });
 });

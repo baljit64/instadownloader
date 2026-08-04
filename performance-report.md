@@ -37,4 +37,8 @@ Use Google’s field thresholds at the 75th percentile, split by mobile and desk
 4. Add consented web-vitals reporting only if it has an operational owner.
 5. Segment downloader API latency and success by provider independently of page rendering.
 
+## Local production smoke result
+
+The verified Webpack production build served `/en` locally with TTFB 35.4 ms, FCP/LCP 112 ms (H1), and CLS 0.01 in the browser automation run. These results are regression evidence only: localhost has no real network distance, device diversity, or 28-day field distribution, and INP needs real interactions and traffic.
+
 Google notes that excellent Core Web Vitals alone do not guarantee rankings and recommends an overall page experience. Source: [Google page experience](https://developers.google.com/search/docs/appearance/page-experience).

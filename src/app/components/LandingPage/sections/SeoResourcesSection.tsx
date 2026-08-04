@@ -19,14 +19,14 @@ export default function SeoResourcesSection({
     <section className="surface-card mt-12 rounded-2xl p-6 sm:p-8">
       <div className="max-w-3xl">
         <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-          Search intent coverage
+          Download help
         </span>
         <h2 className="font-display mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
-          Explore focused Instagram download pages
+          Instagram download guides and troubleshooting
         </h2>
         <p className="mt-3 text-sm leading-6 text-slate-600">
-          These pages target the main Instagram download queries users search for,
-          including posts, reels, photos, carousel media, and troubleshooting.
+          Find media-specific instructions, device help, safety guidance, and practical
+          fixes for public links that do not resolve as expected.
         </p>
       </div>
 
@@ -52,10 +52,10 @@ export default function SeoResourcesSection({
       {allSeoPageLinks.length ? (
         <div className="mt-8">
           <h3 className="font-display text-base font-semibold text-slate-900">
-            Full SEO page hub
+            All download resources
           </h3>
           <p className="mt-1 text-sm leading-6 text-slate-600">
-            Crawlable links to all active intent pages in the current rollout.
+            Browse every current guide and supported downloader page.
           </p>
           <div className="mt-4 flex flex-wrap gap-2.5">
             {allSeoPageLinks.map((link) => (

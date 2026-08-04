@@ -14,14 +14,14 @@ export default function PopularSearchesSection({ links }: PopularSearchesSection
     <section className="surface-card mt-12 rounded-2xl p-6 sm:p-8">
       <div className="max-w-3xl">
         <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-          Popular search terms
+          Quick links
         </span>
         <h2 className="font-display mt-3 text-2xl font-semibold text-slate-900 sm:text-3xl">
-          Pages optimized for common Instagram download queries
+          Popular Instagram download tools
         </h2>
         <p className="mt-3 text-sm leading-6 text-slate-600">
-          If you searched phrases like download instagram post link or insta downloader,
-          these quick links take you to focused pages for that intent.
+          Choose the media type or workflow that matches the public Instagram link you
+          want to save.
         </p>
       </div>
 
