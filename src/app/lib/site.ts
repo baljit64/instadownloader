@@ -1,8 +1,8 @@
-export const siteName = 'Insta Downloader';
+export const siteName = 'IGDown';
 export const siteTitle =
-  'Instagram Downloader - Download Video, Photos, Reels & IGTV';
+  'Instagram Downloader for Videos, Reels & Photos | IGDown';
 export const siteDescription =
-  'Fast, free, and secure Instagram downloader for public links. Download videos, photos, reels, IGTV, and carousel posts without login.';
+  'Download videos, reels, photos, and carousel posts from public Instagram links. IGDown is free, browser-based, and requires no Instagram login.';
 export const siteKeywords = [
   'instagram downloader',
   'insta downloader',
@@ -17,8 +17,6 @@ export const siteKeywords = [
   'download instagram igtv',
   'instagram carousel downloader',
   'download instagram carousel',
-  'instagram story downloader',
-  'download instagram story',
   'free instagram downloader',
   'instagram downloader no login',
   'online instagram downloader',
@@ -36,6 +34,7 @@ export const siteAlternateNames = [
   'Instagram Downloader',
   'Insta Downloader',
   'IG Downloader',
+  'IGDown.pro',
 ];
 
 export const siteFeatureList = [

@@ -135,9 +135,47 @@ export function getLandingPageContent(
   const homepageFaqs: SeoFaq[] =
     locale === 'en'
       ? [
-          seoPageMap['download-instagram-post-by-link']?.faqs[0],
-          seoPageMap['instagram-reel-downloader']?.faqs[0],
-        ].filter((faq): faq is SeoFaq => Boolean(faq))
+          {
+            question: 'How do I download an Instagram video?',
+            answer: 'Copy the complete URL for a public Instagram video, paste it into the downloader, submit it, and save the video from the preview result.',
+          },
+          {
+            question: 'Can I download Instagram reels?',
+            answer: 'Yes. Public /reel/ and /reels/ links are supported. Private, deleted, restricted, or sign-in-only reels are not.',
+          },
+          {
+            question: 'Can I download Instagram stories?',
+            answer: 'No. Stories are not supported in the current product because they are short-lived and commonly require authenticated Instagram access.',
+          },
+          {
+            question: 'Can I download Instagram photos and carousels?',
+            answer: 'Yes. Public photo and carousel post links are supported. A carousel can return multiple image or video result cards.',
+          },
+          {
+            question: 'Does IGDown work on iPhone and Android?',
+            answer: 'Yes. It runs in a modern mobile browser. Android usually saves to Downloads; iPhone and iPad usually save browser downloads in the Files app.',
+          },
+          {
+            question: 'Is an Instagram login required?',
+            answer: 'No. IGDown does not request Instagram credentials. That means it can process supported public links only.',
+          },
+          {
+            question: 'Can IGDown download private content?',
+            answer: 'No. The downloader does not bypass private accounts, Close Friends controls, sign-in requirements, or other access restrictions.',
+          },
+          {
+            question: 'Is the Instagram downloader free?',
+            answer: 'Yes. The current web downloader is free to use and does not require a separate application or browser extension.',
+          },
+          {
+            question: 'Is it safe to use?',
+            answer: 'IGDown does not ask for your Instagram password or session cookie. Use only public URLs, review the preview, and never share account credentials with a downloader.',
+          },
+          {
+            question: 'Why is my Instagram link not working?',
+            answer: 'The post may be private, deleted, restricted, malformed, or temporarily unavailable. Confirm it opens without sign-in and contains a supported /p/, /reel/, /reels/, or /tv/ path.',
+          },
+        ]
       : [];
 
   const localizedHomePath = getLocalePath(locale);
@@ -156,13 +194,18 @@ export function getLandingPageContent(
     '@graph': [
       {
         '@type': 'WebPage',
+        '@id': `${localizedHomeUrl}#webpage`,
         name: dictionary.metadata.homeTitle,
         description: dictionary.metadata.homeDescription,
         url: localizedHomeUrl,
         inLanguage: locale,
+        isPartOf: {
+          '@id': `${absoluteUrl('/')}#website`,
+        },
       },
       {
-        '@type': 'SoftwareApplication',
+        '@type': ['WebApplication', 'SoftwareApplication'],
+        '@id': `${localizedHomeUrl}#app`,
         name: siteName,
         alternateName: siteAlternateNames,
         url: localizedHomeUrl,
@@ -172,6 +215,9 @@ export function getLandingPageContent(
         browserRequirements: 'Requires JavaScript and a modern browser',
         featureList: siteFeatureList,
         isAccessibleForFree: true,
+        publisher: {
+          '@id': `${absoluteUrl('/')}#organization`,
+        },
         offers: {
           '@type': 'Offer',
           price: '0',
@@ -204,8 +250,8 @@ export function getLandingPageContent(
         ];
 
   const footerCompanyLinks = [
-    { href: '#about', label: dictionary.footer.links.about },
-    { href: '#contact', label: dictionary.footer.links.contact },
+    { href: '/about', label: dictionary.footer.links.about },
+    { href: '/contact', label: dictionary.footer.links.contact },
     { href: '#supported-platforms', label: dictionary.footer.links.supportedPlatforms },
   ];
 

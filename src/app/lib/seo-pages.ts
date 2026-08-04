@@ -40,7 +40,7 @@ export interface SeoPageConfig {
   type: 'guide' | 'tool';
 }
 
-export const DEFAULT_REVIEW_DATE = '2026-05-16';
+export const DEFAULT_REVIEW_DATE = '2026-08-05';
 
 function createSeoPage(
   page: Omit<SeoPageConfig, 'canonicalTarget' | 'lastReviewedAt' | 'status'> & {

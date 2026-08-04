@@ -53,20 +53,36 @@ describe('seo page governance', () => {
     for (const page of seoPages) {
       const metadata = buildSeoPageMetadata(page);
       const expectedIndexable = page.status === 'active';
+      const robots = metadata.robots;
+      const openGraph = metadata.openGraph as {
+        modifiedTime?: string;
+        publishedTime?: string;
+        type?: string;
+        url?: string | URL;
+      };
+
+      if (!robots || typeof robots === 'string') {
+        throw new Error(`Expected object robots metadata for ${page.slug}`);
+      }
+      const googleBot = robots.googleBot;
+
+      if (!googleBot || typeof googleBot === 'string') {
+        throw new Error(`Expected object Googlebot metadata for ${page.slug}`);
+      }
 
       expect(metadata.alternates?.canonical).toBe(page.canonicalTarget);
-      expect(metadata.robots?.index).toBe(expectedIndexable);
-      expect(metadata.robots?.follow).toBe(expectedIndexable);
-      expect(metadata.robots?.googleBot?.index).toBe(expectedIndexable);
-      expect(metadata.robots?.googleBot?.follow).toBe(expectedIndexable);
-      expect(metadata.openGraph?.url).toBe(absoluteUrl(page.canonicalTarget));
+      expect(robots.index).toBe(expectedIndexable);
+      expect(robots.follow).toBe(expectedIndexable);
+      expect(googleBot.index).toBe(expectedIndexable);
+      expect(googleBot.follow).toBe(expectedIndexable);
+      expect(openGraph.url).toBe(absoluteUrl(page.canonicalTarget));
 
       if (page.type === 'guide') {
-        expect(metadata.openGraph?.type).toBe('article');
-        expect(metadata.openGraph?.publishedTime).toBe(toIsoDate(page.lastReviewedAt));
-        expect(metadata.openGraph?.modifiedTime).toBe(toIsoDate(page.lastReviewedAt));
+        expect(openGraph.type).toBe('article');
+        expect(openGraph.publishedTime).toBe(toIsoDate(page.lastReviewedAt));
+        expect(openGraph.modifiedTime).toBe(toIsoDate(page.lastReviewedAt));
       } else {
-        expect(metadata.openGraph?.type).toBe('website');
+        expect(openGraph.type).toBe('website');
       }
     }
   });

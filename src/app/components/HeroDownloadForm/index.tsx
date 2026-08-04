@@ -176,9 +176,11 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
                 ]}
               >
                 <Input
+                  aria-label="Public media URL"
                   allowClear
                   autoComplete="off"
                   className="hero-download-input !w-full"
+                  inputMode="url"
                   placeholder={copy.inputPlaceholder}
                   prefix={<IconGlyph name="link" className="h-4 w-4" />}
                   size="large"
@@ -212,20 +214,22 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
           ))}
         </div>
 
-        {status === 'success' ? (
-          <Suspense fallback={<MediaPreviewGridFallback />}>
-            <InstagramMediaPreviewGrid media={media} />
-          </Suspense>
-        ) : null}
+        <div aria-live="polite" className="w-full">
+          {status === 'success' ? (
+            <Suspense fallback={<MediaPreviewGridFallback />}>
+              <InstagramMediaPreviewGrid media={media} />
+            </Suspense>
+          ) : null}
 
-        {status === 'error' && errorMessage ? (
-          <Alert
-            className="hero-download-alert mt-4"
-            message={errorMessage}
-            showIcon
-            type="error"
-          />
-        ) : null}
+          {status === 'error' && errorMessage ? (
+            <Alert
+              className="hero-download-alert mt-4"
+              message={errorMessage}
+              showIcon
+              type="error"
+            />
+          ) : null}
+        </div>
       </div>
     </div>
   );

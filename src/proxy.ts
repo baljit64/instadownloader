@@ -5,9 +5,17 @@ const locales = ['en', 'hi', 'es', 'fr'] as const;
 type Locale = (typeof locales)[number];
 
 const defaultLocale: Locale = 'en';
-const prunedBroadPathRedirects = new Map<string, string>([
+const canonicalPathRedirects = new Map<string, string>([
   ['/instagram-downloader', '/en'],
   ['/insta-downloader', '/en'],
+  ['/reels-downloader', '/instagram-reel-downloader'],
+  ['/photo-downloader', '/instagram-photo-downloader'],
+  ['/carousel-downloader', '/instagram-carousel-downloader'],
+  ['/download-instagram-posts', '/instagram-post-downloader'],
+  ['/download-instagram-reels', '/instagram-reel-downloader'],
+  ['/download-instagram-videos', '/instagram-video-downloader'],
+  ['/instagram-to-mp4', '/instagram-video-downloader'],
+  ['/download-instagram-stories', '/story-downloader'],
 ]);
 
 const localeDirs: Record<Locale, 'ltr' | 'rtl'> = {
@@ -72,7 +80,7 @@ export function proxy(request: NextRequest) {
   const normalizedHost = hostHeader?.toLowerCase() ?? '';
   const originalPathname = request.nextUrl.pathname;
   const normalizedPathname = normalizePathname(originalPathname);
-  const broadPathRedirectTarget = prunedBroadPathRedirects.get(normalizedPathname);
+  const canonicalPathRedirectTarget = canonicalPathRedirects.get(normalizedPathname);
 
   // Canonical host: redirect www.* to the root domain.
   if (normalizedHost.startsWith('www.')) {
@@ -84,8 +92,8 @@ export function proxy(request: NextRequest) {
       const locale = detectPreferredLocale(request.headers.get('accept-language'));
       redirectUrl.pathname = `/${locale}`;
       varyByLanguage = true;
-    } else if (broadPathRedirectTarget) {
-      redirectUrl.pathname = broadPathRedirectTarget;
+    } else if (canonicalPathRedirectTarget) {
+      redirectUrl.pathname = canonicalPathRedirectTarget;
     }
 
     const response = NextResponse.redirect(redirectUrl, 308);
@@ -98,9 +106,9 @@ export function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  if (broadPathRedirectTarget) {
+  if (canonicalPathRedirectTarget) {
     const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = broadPathRedirectTarget;
+    redirectUrl.pathname = canonicalPathRedirectTarget;
     return NextResponse.redirect(redirectUrl, 308);
   }
 

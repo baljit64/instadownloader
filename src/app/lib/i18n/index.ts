@@ -110,8 +110,8 @@ export function detectPreferredLocale(acceptLanguage: string | null): Locale {
 const englishDictionary = {
   metadata: {
     homeDescription:
-      'Fast, free, and secure Instagram downloader for public links. Download videos, photos, reels, IGTV, and carousel posts without login.',
-    homeTitle: 'Instagram Downloader - Download Video, Photos, Reels & IGTV',
+      'Download videos, reels, photos, and carousel posts from public Instagram links. IGDown is free, browser-based, and requires no Instagram login.',
+    homeTitle: 'Instagram Downloader for Videos, Reels & Photos | IGDown',
     proxyStatsDescription: 'Daily Webshare proxy usage for the downloader backend.',
     proxyStatsTitle: 'Proxy Stats',
   },
@@ -291,7 +291,7 @@ const englishDictionary = {
       {
         title: 'High quality',
         description:
-          'Download Instagram content in its original quality without any loss.',
+          'IGDown returns the best public source the extractor can resolve without artificial upscaling.',
       },
       {
         title: 'Security',

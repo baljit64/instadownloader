@@ -5,6 +5,7 @@ import BenefitsSection from './sections/BenefitsSection';
 import ContactSection from './sections/ContactSection';
 import FaqSection from './sections/FaqSection';
 import HeroSection from './sections/HeroSection';
+import HomeGuideSection from './sections/HomeGuideSection';
 import LandingPageFooter from './sections/LandingPageFooter';
 import LandingPageHeader from './sections/LandingPageHeader';
 import PopularSearchesSection from './sections/PopularSearchesSection';
@@ -50,6 +51,7 @@ export default async function LandingPage({ dictionary, locale }: LandingPagePro
           aboutCards={content.aboutCards}
           copy={dictionary.aboutSection}
         />
+        {locale === 'en' ? <HomeGuideSection /> : null}
         <SeoResourcesSection
           allSeoPageLinks={content.allSeoPageLinks}
           featuredSeoPages={content.featuredSeoPages}

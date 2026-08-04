@@ -2,8 +2,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { headers } from 'next/headers';
 import type { Metadata, Viewport } from 'next';
-import { Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
-import Script from 'next/script';
+import CookieConsent from './components/CookieConsent';
 import LazyPwaClient from './components/LazyPwaClient';
 import './globals.css';
 import {
@@ -18,21 +17,10 @@ import {
   getTwitterImages,
   siteAlternateNames,
   siteDescription,
-  siteFeatureList,
   siteKeywords,
   siteName,
   siteTitle,
 } from './lib/site';
-
-const bodyFont = Plus_Jakarta_Sans({
-  variable: '--font-body',
-  subsets: ['latin'],
-});
-
-const displayFont = Space_Grotesk({
-  variable: '--font-display',
-  subsets: ['latin'],
-});
 
 const siteUrl = getSiteUrl();
 const gaId =
@@ -150,10 +138,8 @@ export default async function RootLayout({
       : defaultLocale;
   const requestDir = requestHeaders.get('x-site-dir');
   const dir = requestDir === 'rtl' || requestDir === 'ltr' ? requestDir : localeInfo[locale].dir;
-  const homeUrl = absoluteUrl('/en');
   const websiteId = `${siteUrl}/#website`;
   const organizationId = `${siteUrl}/#organization`;
-  const appId = `${siteUrl}/#app`;
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -163,18 +149,11 @@ export default async function RootLayout({
         '@type': 'WebSite',
         name: siteName,
         alternateName: siteAlternateNames,
-        url: homeUrl,
+        url: siteUrl,
         description: siteDescription,
         inLanguage: 'en',
-      },
-      {
-        '@type': 'WebPage',
-        name: siteTitle,
-        description: siteDescription,
-        url: homeUrl,
-        inLanguage: 'en',
-        isPartOf: {
-          '@id': websiteId,
+        publisher: {
+          '@id': organizationId,
         },
       },
       {
@@ -182,8 +161,12 @@ export default async function RootLayout({
         '@type': 'Organization',
         name: siteName,
         url: siteUrl,
-        logo: absoluteUrl('/pwa/icon-512.png'),
-        sameAs: [siteUrl],
+        logo: {
+          '@type': 'ImageObject',
+          url: absoluteUrl('/pwa/icon-512.png'),
+          width: 512,
+          height: 512,
+        },
         contactPoint: [
           {
             '@type': 'ContactPoint',
@@ -192,56 +175,18 @@ export default async function RootLayout({
           },
         ],
       },
-      {
-        '@type': 'SoftwareApplication',
-        '@id': appId,
-        name: siteName,
-        alternateName: siteAlternateNames,
-        url: homeUrl,
-        applicationCategory: 'UtilitiesApplication',
-        operatingSystem: 'Windows, macOS, Linux, Android, iOS',
-        browserRequirements: 'Requires JavaScript and a modern browser',
-        description: siteDescription,
-        featureList: siteFeatureList,
-        applicationSubCategory: 'Social Media Downloader',
-        isAccessibleForFree: true,
-        publisher: {
-          '@id': organizationId,
-        },
-        offers: {
-          '@type': 'Offer',
-          price: '0',
-          priceCurrency: 'USD',
-          availability: 'https://schema.org/InStock',
-        },
-      },
     ],
   };
 
   return (
     <html lang={locale} dir={dir}>
-      <body className={`${bodyFont.variable} ${displayFont.variable} antialiased`}>
+      <body className="antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         {children}
-        {gaId ? (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-              strategy="afterInteractive"
-            />
-            <Script id="google-analytics" strategy="afterInteractive">
-              {`
-                window.dataLayer = window.dataLayer || [];
-                window.gtag = function gtag(){window.dataLayer.push(arguments);};
-                gtag('js', new Date());
-                gtag('config', '${gaId}');
-              `}
-            </Script>
-          </>
-        ) : null}
+        {gaId ? <CookieConsent measurementId={gaId} /> : null}
         <LazyPwaClient />
         {enableVercelTelemetry ? <Analytics /> : null}
         {enableVercelTelemetry ? <SpeedInsights /> : null}

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { SeoPageConfig } from '../lib/seo-pages';
+import { seoPageDetails } from '../lib/seo-page-details';
 import { absoluteUrl, siteName } from '../lib/site';
 
 function getReviewDateIso(value: string): string {
@@ -18,7 +19,7 @@ function formatReviewDate(value: string): string {
 function buildStructuredData(page: SeoPageConfig) {
   const pageUrl = absoluteUrl(`/${page.slug}`);
   const pageId = `${pageUrl}#webpage`;
-  const articleId = `${pageUrl}#article`;
+  const primaryEntityId = `${pageUrl}#primary-entity`;
   const organizationId = `${absoluteUrl('/')}#organization`;
   const websiteId = `${absoluteUrl('/')}#website`;
   const reviewedAtIso = getReviewDateIso(page.lastReviewedAt);
@@ -63,30 +64,53 @@ function buildStructuredData(page: SeoPageConfig) {
           },
         ],
       },
-      {
-        '@id': articleId,
-        '@type': 'Article',
-        headline: page.heroTitle,
-        name: page.metadataTitle,
-        description: page.metadataDescription,
-        url: pageUrl,
-        inLanguage: 'en',
-        datePublished: reviewedAtIso,
-        dateModified: reviewedAtIso,
-        keywords: page.keywords.join(', '),
-        mainEntityOfPage: {
-          '@id': pageId,
-        },
-        author: {
-          '@type': 'Organization',
-          name: siteName,
-          url: absoluteUrl('/en'),
-        },
-        publisher: {
-          '@id': organizationId,
-        },
-        image: absoluteUrl('/opengraph-image'),
-      },
+      ...(page.type === 'guide'
+        ? [
+            {
+              '@id': primaryEntityId,
+              '@type': 'Article',
+              headline: page.heroTitle,
+              name: page.metadataTitle,
+              description: page.metadataDescription,
+              url: pageUrl,
+              inLanguage: 'en',
+              dateModified: reviewedAtIso,
+              keywords: page.keywords.join(', '),
+              mainEntityOfPage: {
+                '@id': pageId,
+              },
+              author: {
+                '@type': 'Organization',
+                name: siteName,
+                url: absoluteUrl('/about'),
+              },
+              publisher: {
+                '@id': organizationId,
+              },
+              image: absoluteUrl('/opengraph-image'),
+            },
+          ]
+        : [
+            {
+              '@id': primaryEntityId,
+              '@type': ['WebApplication', 'SoftwareApplication'],
+              name: page.shortTitle,
+              description: page.metadataDescription,
+              url: pageUrl,
+              applicationCategory: 'UtilitiesApplication',
+              operatingSystem: 'Windows, macOS, Linux, Android, iOS',
+              browserRequirements: 'Requires JavaScript and a modern browser',
+              isAccessibleForFree: true,
+              publisher: {
+                '@id': organizationId,
+              },
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'USD',
+              },
+            },
+          ]),
       ...(faqEntities.length
         ? [
             {
@@ -109,6 +133,7 @@ export default function SeoContentPage({
 }) {
   const structuredData = buildStructuredData(page);
   const reviewedLabel = formatReviewDate(page.lastReviewedAt);
+  const detailSections = seoPageDetails[page.slug] ?? [];
 
   return (
     <main className="mx-auto w-full max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
@@ -181,6 +206,36 @@ export default function SeoContentPage({
           <p className="mt-5 text-base leading-8 text-[#726a92]">{page.description}</p>
         </div>
       </section>
+
+      {detailSections.length ? (
+        <section aria-labelledby="detailed-guide" className="surface-card mt-10 rounded-[38px] px-6 py-10 sm:px-8">
+          <span className="text-xs font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">
+            Detailed guide
+          </span>
+          <h2 id="detailed-guide" className="font-display mt-4 text-3xl font-bold tracking-[-0.04em] text-[#171923] sm:text-[2.7rem]">
+            Capabilities, quality, and limitations
+          </h2>
+          <div className="mt-8 grid gap-8 lg:grid-cols-3">
+            {detailSections.map((section) => (
+              <article key={section.heading}>
+                <h3 className="font-display text-2xl font-bold tracking-[-0.03em] text-[#171923]">
+                  {section.heading}
+                </h3>
+                {section.paragraphs.map((paragraph) => (
+                  <p className="mt-4 text-sm leading-7 text-[#6d6885]" key={paragraph}>
+                    {paragraph}
+                  </p>
+                ))}
+                {section.bullets ? (
+                  <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-7 text-[#6d6885]">
+                    {section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+                  </ul>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="surface-card mt-10 rounded-[38px] px-6 py-10 sm:px-8">
         <span className="text-xs font-semibold uppercase tracking-[0.28em] text-[#2d7cff]">

@@ -590,7 +590,7 @@ function extractFromJsonEndpoint(
         continue;
       }
 
-      const isHtml = /text\/html/i.test(response.headers['content-type'] ?? '');
+      const isHtml = /text\/html/i.test(String(response.headers['content-type'] ?? ''));
       if (isHtml) {
         const htmlMedia = extractMediaFromHtml(html);
         htmlMedia.forEach((item) => pushMedia(media, seen, item.url, item.type));
