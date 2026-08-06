@@ -1,10 +1,12 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-
-const locales = ['en', 'hi', 'es', 'fr'] as const;
-type Locale = (typeof locales)[number];
-
-const defaultLocale: Locale = 'en';
+import {
+  defaultLocale,
+  detectPreferredLocale,
+  isSupportedLocale,
+  localeInfo,
+  type Locale,
+} from './app/lib/i18n/locales';
 const canonicalPathRedirects = new Map<string, string>([
   ['/instagram-downloader', '/en'],
   ['/insta-downloader', '/en'],
@@ -18,41 +20,9 @@ const canonicalPathRedirects = new Map<string, string>([
   ['/download-instagram-stories', '/story-downloader'],
 ]);
 
-const localeDirs: Record<Locale, 'ltr' | 'rtl'> = {
-  en: 'ltr',
-  hi: 'ltr',
-  es: 'ltr',
-  fr: 'ltr',
-};
-
-function isLocale(value: string): value is Locale {
-  return locales.includes(value as Locale);
-}
-
 function getLocaleFromPath(pathname: string): Locale | null {
   const firstSegment = pathname.split('/').filter(Boolean)[0];
-  return firstSegment && isLocale(firstSegment) ? firstSegment : null;
-}
-
-function detectPreferredLocale(acceptLanguage: string | null): Locale {
-  if (!acceptLanguage) {
-    return defaultLocale;
-  }
-
-  const candidates = acceptLanguage
-    .split(',')
-    .map((part) => part.split(';')[0]?.trim().toLowerCase())
-    .filter(Boolean);
-
-  for (const candidate of candidates) {
-    const baseLocale = candidate.split('-')[0];
-
-    if (baseLocale && isLocale(baseLocale)) {
-      return baseLocale;
-    }
-  }
-
-  return defaultLocale;
+  return firstSegment && isSupportedLocale(firstSegment) ? firstSegment : null;
 }
 
 function normalizePathname(pathname: string): string {
@@ -66,7 +36,7 @@ function normalizePathname(pathname: string): string {
 function applyLocaleHeaders(request: NextRequest, locale: Locale) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-site-locale', locale);
-  requestHeaders.set('x-site-dir', localeDirs[locale]);
+  requestHeaders.set('x-site-dir', localeInfo[locale].dir);
 
   return NextResponse.next({
     request: {
@@ -128,6 +98,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|opengraph-image|twitter-image).*)',
+    '/((?!api|_next/static|_next/image|_vercel|favicon.ico|sitemap.xml|robots.txt|manifest.webmanifest|opengraph-image|twitter-image).*)',
   ],
 };

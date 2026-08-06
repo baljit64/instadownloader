@@ -44,7 +44,7 @@ Build durable organic growth around the real public-link downloader, without uns
 
 ## 3–12 months
 
-- Expand translations only with reviewed, complete, equivalent content.
+- Complete native-speaker review of the 30 localized homepages and expand translated support content only where local-language demand is measurable.
 - Add Story/profile features and indexable pages only if the product can support them reliably without credential collection or access-control bypass.
 - Split sitemaps when the canonical indexable inventory approaches operational limits, not before.
 - Create an editorial change log and named review responsibility.
@@ -58,4 +58,3 @@ Build durable organic growth around the real public-link downloader, without uns
 - Redirect aliases return one-hop 308 responses.
 - Noindex capability notices are absent from sitemap.
 - Claims match `isValidInstagramPostUrl` and live extractor behavior.
-

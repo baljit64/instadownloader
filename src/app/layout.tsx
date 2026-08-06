@@ -27,7 +27,9 @@ const gaId =
   process.env.NEXT_PUBLIC_GA_ID ??
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ??
   '';
-const enableVercelTelemetry = process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === 'true';
+// Enabled unless explicitly opted out. Both components no-op outside production, so an
+// opt-in flag only risks silently dropping production traffic.
+const enableVercelTelemetry = process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS !== 'false';
 const googleSiteVerification =
   process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ?? undefined;
 const bingSiteVerification =
@@ -179,7 +181,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang={locale} dir={dir}>
+    <html lang={localeInfo[locale].hreflang} dir={dir}>
       <body className="antialiased">
         <script
           type="application/ld+json"

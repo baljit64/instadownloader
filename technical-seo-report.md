@@ -31,7 +31,7 @@ Redirects are 308 and resolve in one hop. Canonical destinations are the only ve
 
 `/sitemap.xml` contains:
 
-- four localized home URLs with hreflang alternates and x-default;
+- 30 localized home URLs with reciprocal hreflang alternates and x-default;
 - all active canonical tool/guide pages;
 - six trust pages;
 - image locations for the OG image and homepage content images;
@@ -43,7 +43,7 @@ Google recommends including only URLs intended for search and notes that sitemap
 
 ## Internationalization
 
-Only real translations receive hreflang: `en`, `hi`, `es`, `fr`, plus `x-default` to `/en`. English-only feature, guide, and legal pages do not emit invented language alternates. Adding `de`, `it`, `pt`, `ar`, or `id` requires complete, reviewed equivalents first.
+The localized homepage set now covers 30 languages plus `x-default` to `/en`. URL slugs and language tags are governed separately where needed: Czech uses `cs`, Norwegian Bokmål uses `nb`, and Chinese alternates emit `zh-CN` and `zh-TW`. Arabic, Hebrew, and Persian render RTL. English-only feature, guide, and legal pages do not emit invented language alternates. Primary UI and metadata are localized; supporting copy should continue through native-speaker editorial review.
 
 ## Crawlability and rendering
 

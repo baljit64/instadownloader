@@ -1,5 +1,10 @@
 import type { IconGlyphName } from '../IconGlyph';
-import { getLocalePath, type Locale, type TranslationDictionary } from '../../lib/i18n';
+import {
+  getLocalePath,
+  localeInfo,
+  type Locale,
+  type TranslationDictionary,
+} from '../../lib/i18n';
 import { activeSeoPages, seoPageMap, type SeoFaq, type SeoPageConfig } from '../../lib/seo-pages';
 import {
   absoluteUrl,
@@ -200,7 +205,7 @@ export function getLandingPageContent(
         name: dictionary.metadata.homeTitle,
         description: dictionary.metadata.homeDescription,
         url: localizedHomeUrl,
-        inLanguage: locale,
+        inLanguage: localeInfo[locale].hreflang,
         mainEntity: [
           { '@id': applicationId },
           ...(featuredSeoPages.length ? [{ '@id': toolCollectionId }] : []),
@@ -260,7 +265,7 @@ export function getLandingPageContent(
         ? [
             {
               '@type': 'FAQPage',
-              inLanguage: locale,
+              inLanguage: localeInfo[locale].hreflang,
               mainEntity: faqMainEntity,
             },
           ]

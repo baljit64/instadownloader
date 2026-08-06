@@ -34,11 +34,11 @@ export default function LanguageSwitcher({
         </span>
       </summary>
 
-      <div className="absolute right-0 top-full z-[60] mt-2 w-[16rem] rounded-lg border border-slate-200 bg-white p-3 shadow-xl">
+      <div className="absolute right-0 top-full z-[60] mt-2 max-h-[70vh] w-[min(38rem,calc(100vw-2rem))] overflow-y-auto rounded-lg border border-slate-200 bg-white p-3 shadow-xl">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
           {buttonLabel}
         </p>
-        <div className="mt-2 grid grid-cols-2 gap-2">
+        <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {locales.map((locale) => {
             const hrefPathname = localizePathname(pathname, locale);
             const href = queryString ? `${hrefPathname}?${queryString}` : hrefPathname;

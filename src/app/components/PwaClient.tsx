@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { isSupportedLocale, locales } from '../lib/i18n';
+import { isSupportedLocale, locales, type Locale } from '../lib/i18n';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -14,10 +14,36 @@ interface BeforeInstallPromptEvent extends Event {
 
 const installLabels = {
   en: 'Install app',
+  vi: 'Cài đặt ứng dụng',
+  ar: 'تثبيت التطبيق',
+  cs: 'Nainstalovat aplikaci',
+  de: 'App installieren',
   hi: 'ऐप इंस्टॉल करें',
   es: 'Instalar app',
   fr: 'Installer l’app',
-};
+  id: 'Instal aplikasi',
+  it: 'Installa app',
+  ja: 'アプリをインストール',
+  ko: '앱 설치',
+  pl: 'Zainstaluj aplikację',
+  pt: 'Instalar aplicação',
+  ro: 'Instalează aplicația',
+  ru: 'Установить приложение',
+  th: 'ติดตั้งแอป',
+  tr: 'Uygulamayı yükle',
+  uk: 'Установити застосунок',
+  'zh-cn': '安装应用',
+  'zh-tw': '安裝應用程式',
+  ms: 'Pasang aplikasi',
+  hu: 'Alkalmazás telepítése',
+  nl: 'App installeren',
+  el: 'Εγκατάσταση εφαρμογής',
+  he: 'התקנת האפליקציה',
+  fa: 'نصب برنامه',
+  nb: 'Installer app',
+  sv: 'Installera app',
+  fi: 'Asenna sovellus',
+} satisfies Record<Locale, string>;
 
 export default function PwaClient() {
   const pathname = usePathname();

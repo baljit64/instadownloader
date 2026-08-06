@@ -10,7 +10,7 @@ ClipDown's strongest SEO asset is scale: its XML sitemap contains 300 URLs made 
 
 IGDown should not reproduce that footprint mechanically. Several ClipDown claims conflict or overreach: the homepage says private accounts are supported and later says only public content is supported; its structured data describes a downloader as an `EntertainmentBusiness`; visible FAQs have no FAQ schema; guide pages have no Article schema; the document has no `main` landmark; and its 30-language × 10-template sitemap uses the same last-modified timestamp across every URL. It also incurs substantial ad/third-party cost and layout instability.
 
-The implemented IGDown strategy is smaller but materially stronger: 36 governed canonical URLs, four real localized homepages, 2,714 visible English homepage words versus ClipDown's 1,349, clearer public/private limits, working media-specific pages, a complete support cluster, visible FAQ plus matching schema, accurate application and article entities, trust/legal pages, semantic HTML, and fewer client resources. The live pre-change Lighthouse comparison scored IGDown 95/100 performance, 100 accessibility, 100 best practices, and 100 SEO; ClipDown scored 82/85/58/100 in the same environment.
+The implemented IGDown strategy is smaller but materially stronger: 62 governed canonical URLs, 30 localized homepages, 2,714 visible English homepage words versus ClipDown's 1,349, clearer public/private limits, working media-specific pages, a complete support cluster, visible FAQ plus matching schema, accurate application and article entities, trust/legal pages, semantic HTML, and fewer client resources. The live pre-change Lighthouse comparison scored IGDown 95/100 performance, 100 accessibility, 100 best practices, and 100 SEO; ClipDown scored 82/85/58/100 in the same environment.
 
 No ranking outcome is guaranteed. This analysis covers public HTML, rendered pages, response headers, crawl files, and a lab test. It does not have access to either site's Search Console, analytics, server logs, editorial process, paid keyword database, or third-party backlink index.
 
@@ -72,9 +72,7 @@ IGDown uses a shorter intent-led title, unique descriptions, self-canonicals, `s
 
 ClipDown's main defensible advantage is international coverage: 30 locales are linked reciprocally and represented across all ten sitemap patterns. The locale code is `/cz` while hreflang correctly uses `cs`; this works but makes code governance less intuitive. The audit did not verify translation quality.
 
-IGDown exposes only English, Hindi, Spanish, and French because those pages exist. Each localized homepage renders the correct document language and reciprocal alternates. This is superior to emitting hreflang for untranslated or partially translated pages, but it remains the clearest reach gap.
-
-Expansion gate: add a locale only when the whole visible homepage, metadata, validation messages, navigation, FAQ, legal implications, and support path have been reviewed by a fluent editor. Do not translate the 26 English support pages until search demand and editorial ownership justify them.
+IGDown now exposes the same 30-language homepage breadth with native language labels, localized primary UI and metadata, correct document language/direction, reciprocal alternates, and sitemap entries. URL slugs remain standards-led (`cs`, `nb`, `zh-cn`, `zh-tw`) while hreflang emits the corresponding BCP 47 tags (`cs`, `nb`, `zh-CN`, `zh-TW`). Supporting marketing copy should continue through fluent-editor review. The 26 English support pages remain English-only until search demand and editorial ownership justify complete equivalents.
 
 ### Robots and XML sitemap
 
@@ -174,7 +172,7 @@ Quality rule: publish a page only when it has a distinct user problem, unique ev
 
 | Gap | Current decision | Closure plan |
 |---|---|---|
-| 26 additional locales | Real reach gap | Prioritize by Search Console demand and translation capacity; start with one or two complete locales, not bulk machine output |
+| Native-speaker review across 26 newly added locales | Editorial quality gap after technical rollout | Review primary copy first, then supporting sections by Search Console demand; correct terminology without changing URL or hreflang contracts |
 | Story downloader | Product does not support it | Keep noindex capability notice; make indexable only after reliable public, policy-compliant support |
 | Profile/DP downloader | Product does not support it | Same product gate; do not advertise a non-working tool |
 | Highlights downloader | No working route | Add only after extractor and UI support are tested |
@@ -296,7 +294,7 @@ The requested Story and Profile clusters remain capability/education nodes, not 
 
 ### Phase 3 — growth (60–180 days)
 
-- Select the next locale from real demand and publish one complete reviewed translation set.
+- Complete native-speaker review of the highest-demand new locales and expand only the support articles that have measurable local-language demand.
 - Build the browser/device matrix and anonymized failure-taxonomy linkable assets.
 - Run transparent outreach to creator, browser-support, digital-rights, and social-media-management publications.
 - Maintain only real external brand profiles, then add verified `sameAs` URLs.

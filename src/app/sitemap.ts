@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { locales } from './lib/i18n';
+import { localeInfo, locales } from './lib/i18n';
 import { DEFAULT_REVIEW_DATE, activeSeoPages } from './lib/seo-pages';
 import { absoluteUrl } from './lib/site';
 import { trustPages } from './lib/trust-pages';
@@ -19,7 +19,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ],
     alternates: {
       languages: Object.fromEntries([
-        ...locales.map((alternateLocale) => [alternateLocale, absoluteUrl(`/${alternateLocale}`)]),
+        ...locales.map((alternateLocale) => [
+          localeInfo[alternateLocale].hreflang,
+          absoluteUrl(`/${alternateLocale}`),
+        ]),
         ['x-default', absoluteUrl('/en')],
       ]),
     },

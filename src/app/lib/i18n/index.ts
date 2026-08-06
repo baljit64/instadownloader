@@ -1,53 +1,21 @@
 import { absoluteUrl } from '../site';
+import {
+  defaultLocale,
+  isSupportedLocale,
+  localeInfo,
+  locales,
+  type Locale,
+} from './locales';
+import { coreLocaleCopy, type CoreLocaleCopy } from './core-translations';
 
-export const locales = ['en', 'hi', 'es', 'fr'] as const;
-export type Locale = (typeof locales)[number];
-
-export const defaultLocale: Locale = 'en';
-
-export const localeInfo = {
-  en: {
-    dir: 'ltr',
-    intl: 'en-US',
-    nativeName: 'English',
-    ogLocale: 'en_US',
-    shortLabel: 'EN',
-  },
-  hi: {
-    dir: 'ltr',
-    intl: 'hi-IN',
-    nativeName: 'हिन्दी',
-    ogLocale: 'hi_IN',
-    shortLabel: 'HI',
-  },
-  es: {
-    dir: 'ltr',
-    intl: 'es-ES',
-    nativeName: 'Español',
-    ogLocale: 'es_ES',
-    shortLabel: 'ES',
-  },
-  fr: {
-    dir: 'ltr',
-    intl: 'fr-FR',
-    nativeName: 'Français',
-    ogLocale: 'fr_FR',
-    shortLabel: 'FR',
-  },
-} as const satisfies Record<
-  Locale,
-  {
-    dir: 'ltr' | 'rtl';
-    intl: string;
-    nativeName: string;
-    ogLocale: string;
-    shortLabel: string;
-  }
->;
-
-export function isSupportedLocale(value: string): value is Locale {
-  return locales.includes(value as Locale);
-}
+export {
+  defaultLocale,
+  detectPreferredLocale,
+  isSupportedLocale,
+  localeInfo,
+  locales,
+  type Locale,
+} from './locales';
 
 export function getLocalePath(locale: Locale, pathname = ''): string {
   if (!pathname || pathname === '/') {
@@ -76,7 +44,7 @@ export function localizePathname(pathname: string, locale: Locale): string {
 
 export function buildLocaleAlternates(pathname = ''): Record<string, string> {
   const localizedEntries = locales.map((locale) => [
-    locale,
+    localeInfo[locale].hreflang,
     absoluteUrl(getLocalePath(locale, pathname)),
   ]);
 
@@ -84,27 +52,6 @@ export function buildLocaleAlternates(pathname = ''): Record<string, string> {
     ...localizedEntries,
     ['x-default', absoluteUrl(getLocalePath(defaultLocale, pathname))],
   ]);
-}
-
-export function detectPreferredLocale(acceptLanguage: string | null): Locale {
-  if (!acceptLanguage) {
-    return defaultLocale;
-  }
-
-  const candidates = acceptLanguage
-    .split(',')
-    .map((part) => part.split(';')[0]?.trim().toLowerCase())
-    .filter(Boolean);
-
-  for (const candidate of candidates) {
-    const baseLocale = candidate.split('-')[0];
-
-    if (baseLocale && isSupportedLocale(baseLocale)) {
-      return baseLocale;
-    }
-  }
-
-  return defaultLocale;
 }
 
 const englishDictionary = {
@@ -367,6 +314,40 @@ const englishDictionary = {
     window: 'Window',
   },
 };
+
+function createCoreLocalizedDictionary(
+  copy: CoreLocaleCopy
+): typeof englishDictionary {
+  return {
+    ...englishDictionary,
+    metadata: {
+      ...englishDictionary.metadata,
+      homeDescription: copy.description,
+      homeTitle: copy.title,
+    },
+    header: {
+      ...englishDictionary.header,
+      about: copy.about,
+      contact: copy.contact,
+      home: copy.home,
+      languageMenu: copy.language,
+      learnMore: copy.learnMore,
+    },
+    hero: {
+      ...englishDictionary.hero,
+      buttonDownload: copy.download,
+      buttonLoading: copy.downloading,
+      inputPlaceholder: copy.placeholder,
+      note: copy.note,
+      subtitle: copy.subtitle,
+      title: copy.title.replace(/\s*\|\s*IGDown$/u, ''),
+      validations: {
+        required: copy.required,
+        unsupported: copy.unsupported,
+      },
+    },
+  };
+}
 
 const dictionaries = {
   en: englishDictionary,
@@ -1042,6 +1023,32 @@ const dictionaries = {
       window: 'Fenetre',
     },
   },
+  vi: createCoreLocalizedDictionary(coreLocaleCopy.vi),
+  ar: createCoreLocalizedDictionary(coreLocaleCopy.ar),
+  cs: createCoreLocalizedDictionary(coreLocaleCopy.cs),
+  de: createCoreLocalizedDictionary(coreLocaleCopy.de),
+  id: createCoreLocalizedDictionary(coreLocaleCopy.id),
+  it: createCoreLocalizedDictionary(coreLocaleCopy.it),
+  ja: createCoreLocalizedDictionary(coreLocaleCopy.ja),
+  ko: createCoreLocalizedDictionary(coreLocaleCopy.ko),
+  pl: createCoreLocalizedDictionary(coreLocaleCopy.pl),
+  pt: createCoreLocalizedDictionary(coreLocaleCopy.pt),
+  ro: createCoreLocalizedDictionary(coreLocaleCopy.ro),
+  ru: createCoreLocalizedDictionary(coreLocaleCopy.ru),
+  th: createCoreLocalizedDictionary(coreLocaleCopy.th),
+  tr: createCoreLocalizedDictionary(coreLocaleCopy.tr),
+  uk: createCoreLocalizedDictionary(coreLocaleCopy.uk),
+  'zh-cn': createCoreLocalizedDictionary(coreLocaleCopy['zh-cn']),
+  'zh-tw': createCoreLocalizedDictionary(coreLocaleCopy['zh-tw']),
+  ms: createCoreLocalizedDictionary(coreLocaleCopy.ms),
+  hu: createCoreLocalizedDictionary(coreLocaleCopy.hu),
+  nl: createCoreLocalizedDictionary(coreLocaleCopy.nl),
+  el: createCoreLocalizedDictionary(coreLocaleCopy.el),
+  he: createCoreLocalizedDictionary(coreLocaleCopy.he),
+  fa: createCoreLocalizedDictionary(coreLocaleCopy.fa),
+  nb: createCoreLocalizedDictionary(coreLocaleCopy.nb),
+  sv: createCoreLocalizedDictionary(coreLocaleCopy.sv),
+  fi: createCoreLocalizedDictionary(coreLocaleCopy.fi),
 } satisfies Record<Locale, typeof englishDictionary>;
 
 export type TranslationDictionary = typeof englishDictionary;
