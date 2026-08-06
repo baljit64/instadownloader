@@ -7,7 +7,7 @@ Use Google’s field thresholds at the 75th percentile, split by mobile and desk
 ## Current implementation strengths
 
 - Public explanatory content is server rendered.
-- Downloader interactivity is isolated to a client component.
+- Downloader interactivity is isolated to a small client component using native controls.
 - Result preview code is lazy-loaded only after successful extraction.
 - Content images use `next/image`, intrinsic dimensions/`fill`, and responsive `sizes`.
 - Google Analytics is not fetched before consent.
@@ -20,7 +20,7 @@ Use Google’s field thresholds at the 75th percentile, split by mobile and desk
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Ant Design in the interactive form | Client JS and CSS cost | Measure route chunks; replace only if field INP/LCP data justifies the migration |
+| Ant Design in the post-success result grid | Loaded only after extraction succeeds | Replace result controls only if interaction or repeat-download field data justifies it |
 | System fonts vary slightly by operating system | Minor visual variation | Keep robust fallback stacks and verify layout on major platforms |
 | Large English homepage | More HTML | Content is text-heavy and compressible; keep tool first and avoid heavy media additions |
 | Service worker/PWA client | Client work | Verify registration timing and remove if offline value is not used |
@@ -40,5 +40,9 @@ Use Google’s field thresholds at the 75th percentile, split by mobile and desk
 ## Local production smoke result
 
 The verified Webpack production build served `/en` locally with TTFB 35.4 ms, FCP/LCP 112 ms (H1), and CLS 0.01 in the browser automation run. These results are regression evidence only: localhost has no real network distance, device diversity, or 28-day field distribution, and INP needs real interactions and traffic.
+
+## 2026-08-06 competitor and optimization measurement
+
+The same live Lighthouse setup scored ClipDown 82 performance with 1,099 KiB, 66 requests, and CLS 0.312. IGDown production before the native-form change scored 95 performance with 452 KiB, 17 requests, 130 ms TBT, and CLS 0. The local production build after the change scored 96 with 292 KiB, 16 requests, 30 ms TBT, and CLS 0; estimated unused JavaScript fell from 101 KiB to 58 KiB. Localhost is not directly comparable to an internet origin for timing, but payload, request, and bundle reductions are useful regression evidence.
 
 Google notes that excellent Core Web Vitals alone do not guarantee rankings and recommends an overall page experience. Source: [Google page experience](https://developers.google.com/search/docs/appearance/page-experience).

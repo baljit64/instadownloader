@@ -1,9 +1,7 @@
 'use client';
 
-import { lazy, Suspense, useState } from 'react';
-import { Alert, Button, Form, Input } from 'antd';
+import { lazy, Suspense, useState, type FormEvent } from 'react';
 import {
-  isSupportedMediaUrl,
   normalizeSupportedMediaUrl,
   type MediaItem,
 } from '../../lib/media';
@@ -32,10 +30,6 @@ export interface HeroDownloadFormCopy {
 interface HeroDownloadFormProps {
   copy: HeroDownloadFormCopy;
   formats: string[];
-}
-
-interface FormValues {
-  url: string;
 }
 
 interface ApiSuccessResponse {
@@ -67,26 +61,36 @@ function MediaPreviewGridFallback() {
 }
 
 export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProps) {
-  const [form] = Form.useForm<FormValues>();
+  const [url, setUrl] = useState('');
   const [status, setStatus] = useState<DownloaderStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [media, setMedia] = useState<MediaItem[]>([]);
   const isLoading = status === 'loading';
 
-  async function handleFinish(values: FormValues) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!url.trim()) {
+      setStatus('error');
+      setErrorMessage(copy.validations.required);
+      setMedia([]);
+      return;
+    }
+
     let normalizedUrl = '';
     try {
-      normalizedUrl = normalizeSupportedMediaUrl(values.url);
+      normalizedUrl = normalizeSupportedMediaUrl(url);
     } catch {
       setStatus('error');
       setErrorMessage(copy.validations.unsupported);
+      setMedia([]);
       trackAnalyticsEvent('downloader_form_submit_invalid_url', {
         source: 'hero_download_form',
       });
       return;
     }
 
-    form.setFieldsValue({ url: normalizedUrl });
+    setUrl(normalizedUrl);
     setStatus('loading');
     setErrorMessage('');
     setMedia([]);
@@ -134,7 +138,9 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
     }
   }
 
-  function handleValuesChange() {
+  function handleUrlChange(nextUrl: string) {
+    setUrl(nextUrl);
+
     if (status !== 'idle') {
       setStatus('idle');
       setErrorMessage('');
@@ -145,70 +151,54 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
   return (
     <div className="mx-auto mt-8 w-full max-w-3xl">
       <div className="hero-download-shell">
-        <Form<FormValues>
-          form={form}
+        <form
           className="hero-download-form w-full"
-          onFinish={handleFinish}
-          onValuesChange={handleValuesChange}
-          requiredMark={false}
-          validateTrigger={['onChange', 'onBlur', 'onSubmit']}
+          noValidate
+          onSubmit={handleSubmit}
         >
           <div className="hero-search-surface">
             <div className="hero-search-frame flex flex-col gap-3 md:flex-row md:items-center">
-              <Form.Item<FormValues>
-                className="hero-download-field !mb-0 flex-1"
-                help={null}
-                name="url"
-                rules={[
-                  {
-                    required: true,
-                    message: copy.validations.required,
-                  },
-                  {
-                    validator: async (_, value: string | undefined) => {
-                      if (!value || isSupportedMediaUrl(value)) {
-                        return;
-                      }
-
-                      throw new Error(copy.validations.unsupported);
-                    },
-                  },
-                ]}
-              >
-                <Input
-                  aria-label="Public media URL"
-                  allowClear
-                  autoComplete="off"
-                  className="hero-download-input !w-full"
-                  inputMode="url"
-                  placeholder={copy.inputPlaceholder}
-                  prefix={<IconGlyph name="link" className="h-4 w-4" />}
-                  size="large"
+              <div className="hero-download-field relative flex-1">
+                <IconGlyph
+                  className="pointer-events-none absolute left-4 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-slate-400"
+                  name="link"
                 />
-              </Form.Item>
+                <input
+                  aria-describedby={status === 'error' ? 'hero-download-error' : undefined}
+                  aria-invalid={status === 'error'}
+                  aria-label="Public media URL"
+                  autoComplete="off"
+                  className="hero-download-input w-full pl-11 pr-4"
+                  inputMode="url"
+                  onChange={(event) => handleUrlChange(event.target.value)}
+                  placeholder={copy.inputPlaceholder}
+                  type="url"
+                  value={url}
+                />
+              </div>
 
-              <Button
+              <button
                 className="hero-download-button w-full md:w-auto"
-                htmlType="submit"
-                loading={isLoading}
-                type="primary"
+                disabled={isLoading}
+                type="submit"
               >
+                {isLoading ? (
+                  <span
+                    aria-hidden="true"
+                    className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+                  />
+                ) : null}
                 {isLoading ? copy.buttonLoading : copy.buttonDownload}
-              </Button>
+              </button>
             </div>
           </div>
-        </Form>
+        </form>
 
-        <p className="hero-download-note">
-          {copy.note}
-        </p>
+        <p className="hero-download-note">{copy.note}</p>
 
         <div className="hero-format-rail">
           {formats.map((item) => (
-            <span
-              key={item}
-              className="hero-format-pill"
-            >
+            <span key={item} className="hero-format-pill">
               {item}
             </span>
           ))}
@@ -222,12 +212,13 @@ export default function HeroDownloadForm({ copy, formats }: HeroDownloadFormProp
           ) : null}
 
           {status === 'error' && errorMessage ? (
-            <Alert
-              className="hero-download-alert mt-4"
-              message={errorMessage}
-              showIcon
-              type="error"
-            />
+            <div
+              className="hero-download-alert mt-4 text-left text-sm font-medium text-red-800"
+              id="hero-download-error"
+              role="alert"
+            >
+              {errorMessage}
+            </div>
           ) : null}
         </div>
       </div>

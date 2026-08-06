@@ -180,6 +180,8 @@ export function getLandingPageContent(
 
   const localizedHomePath = getLocalePath(locale);
   const localizedHomeUrl = absoluteUrl(localizedHomePath);
+  const applicationId = `${localizedHomeUrl}#app`;
+  const toolCollectionId = `${localizedHomeUrl}#download-resources`;
   const faqMainEntity = homepageFaqs.map((faq) => ({
     '@type': 'Question',
     name: faq.question,
@@ -193,19 +195,23 @@ export function getLandingPageContent(
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'WebPage',
+        '@type': locale === 'en' ? 'CollectionPage' : 'WebPage',
         '@id': `${localizedHomeUrl}#webpage`,
         name: dictionary.metadata.homeTitle,
         description: dictionary.metadata.homeDescription,
         url: localizedHomeUrl,
         inLanguage: locale,
+        mainEntity: [
+          { '@id': applicationId },
+          ...(featuredSeoPages.length ? [{ '@id': toolCollectionId }] : []),
+        ],
         isPartOf: {
           '@id': `${absoluteUrl('/')}#website`,
         },
       },
       {
         '@type': ['WebApplication', 'SoftwareApplication'],
-        '@id': `${localizedHomeUrl}#app`,
+        '@id': applicationId,
         name: siteName,
         alternateName: siteAlternateNames,
         url: localizedHomeUrl,
@@ -224,6 +230,32 @@ export function getLandingPageContent(
           priceCurrency: 'USD',
         },
       },
+      ...(featuredSeoPages.length
+        ? [
+            {
+              '@type': 'ItemList',
+              '@id': toolCollectionId,
+              name: 'Instagram download tools and guides',
+              numberOfItems: featuredSeoPages.length,
+              itemListElement: featuredSeoPages.map((page, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                name: page.shortTitle,
+                url: absoluteUrl(`/${page.slug}`),
+              })),
+            },
+            {
+              '@type': 'SiteNavigationElement',
+              '@id': `${localizedHomeUrl}#primary-navigation`,
+              name: navigation.map((item) => item.label),
+              url: navigation.map((item) =>
+                item.href.startsWith('#')
+                  ? `${localizedHomeUrl}${item.href}`
+                  : absoluteUrl(item.href)
+              ),
+            },
+          ]
+        : []),
       ...(faqMainEntity.length
         ? [
             {

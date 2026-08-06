@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button, Card, Tag } from 'antd';
 import { trackAnalyticsEvent } from '../lib/analytics';
 import type { MediaItem } from '../lib/media';
@@ -16,10 +16,6 @@ export default function InstagramMediaPreviewGrid({ media }: InstagramMediaPrevi
     Record<number, 'proxy' | 'direct' | 'unavailable'>
   >({});
   const hasActiveSingleDownload = Object.values(downloading).some(Boolean);
-
-  useEffect(() => {
-    setImagePreviewMode({});
-  }, [media]);
 
   const getProxyUrl = (url: string) =>
     `/api/instagram-download-proxy?url=${encodeURIComponent(url)}`;

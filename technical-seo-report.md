@@ -56,3 +56,7 @@ Primary content and internal links render on the server. The downloader form req
 - Confirm `X-Robots-Tag` is not injected by hosting on public pages.
 - Configure Google/Bing verification environment variables as documented in the root layout.
 - Verify URL response headers after every proxy/redirect change.
+
+## Security response headers
+
+Next config now applies `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` restrictions for unused device capabilities, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and `Cross-Origin-Opener-Policy: same-origin-allow-popups`. Vercel supplies HSTS in production. A strict Content Security Policy remains a separately tested task because extraction previews, optional analytics, and service-worker behavior must be inventoried before enforcement.

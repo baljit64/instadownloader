@@ -4,7 +4,7 @@
 
 - Semantic `header`, `nav`, `main`, `section`, `article`, `footer`, table, caption, lists, and heading hierarchy are used.
 - All reviewed public pages have a single H1.
-- The downloader input now has an accessible name and URL input mode.
+- The downloader uses native form controls; its input has an accessible name, URL input mode, `aria-invalid`, and a connected error description.
 - Dynamic success/error results are inside an `aria-live="polite"` region.
 - Consent choices use native buttons, visible text, a labeled aside, and focus-visible styles.
 - Breadcrumbs have an accessible label and current-page indication.
@@ -29,7 +29,7 @@ At a 390 × 844 viewport, the rendered document width matched the viewport (no h
 
 ## Known risk
 
-Ant Design supplies form and alert behavior, so accessibility should be rechecked after library upgrades. Dynamic third-party media previews use generated alt text (“Instagram media N”) because source descriptions are not reliably available; the adjacent provider/type context should remain visible.
+Ant Design remains in the lazy post-success media result grid, so those download controls should be rechecked after library upgrades. Dynamic third-party media previews use generated alt text (“Instagram media N”) because source descriptions are not reliably available; the adjacent provider/type context should remain visible.
 
 ## Acceptance criteria
 
